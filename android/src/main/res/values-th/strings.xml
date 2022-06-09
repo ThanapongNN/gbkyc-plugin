@@ -1,0 +1,90 @@
+<!-- This is a generated file.  Do not manually edit this and commit changes. -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+	<string name="FaceTec_accessibility_cancel_button">ยกเลิก</string>
+	<string name="FaceTec_accessibility_torch_button">สลับแสง</string>
+
+	<string name="FaceTec_action_ok">ตกลง</string>
+	<string name="FaceTec_action_im_ready">พร้อมแล้ว</string>
+	<string name="FaceTec_action_try_again">ลองอีกครั้ง</string>
+	<string name="FaceTec_action_continue">ดำเนินต่อ</string>
+	<string name="FaceTec_action_take_photo">ถ่ายภาพ</string>
+	<string name="FaceTec_action_retake_photo">ถ่ายใหม่</string>
+	<string name="FaceTec_action_accept_photo">ยอมรับ</string>
+	<string name="FaceTec_action_confirm">ยืนยันข้อมูล</string>
+	<string name="FaceTec_action_scan_nfc">สแกน ePASSPORT</string>
+	<string name="FaceTec_action_skip_nfc">ข้ามขั้นตอนนี้</string>
+
+	<string name="FaceTec_camera_permission_header">เปิดใช้งานกล้อง</string>
+	<string name="FaceTec_camera_permission_message_enroll">โปรดคลิกปุ่มด้านล่างเพื่อเปิดใช้งานกล้องเซลฟี่ของคุณ</string>
+	<string name="FaceTec_camera_permission_message_auth">กล้องของคุณถูกปิดใช้งาน แตะด้านล่างเพื่อแก้ไขการตั้งค่าของคุณ</string>
+	<string name="FaceTec_camera_permission_enable_camera">เปิดใช้งานกล้อง</string>
+	<string name="FaceTec_camera_permission_launch_settings">เปิดการตั้งค่า</string>
+
+	<string name="FaceTec_feedback_center_face">จัดตำแหน่งใบหน้าของคุณ</string>
+	<string name="FaceTec_feedback_face_not_found">กรอบใบหน้าของคุณ</string>
+	<string name="FaceTec_feedback_face_not_looking_straight_ahead">มองตรงไปข้างหน้า</string>
+	<string name="FaceTec_feedback_face_not_upright">ตั้งศีรษะตรง</string>
+	<string name="FaceTec_feedback_hold_steady">ถือให้มั่นคง</string>
+	<string name="FaceTec_feedback_move_phone_away">ขยับออก</string>
+	<string name="FaceTec_feedback_move_phone_closer">ขยับเข้าใกล้</string>
+	<string name="FaceTec_feedback_move_phone_to_eye_level">ขยับกล้องไปที่ระดับสายตา</string>
+	<string name="FaceTec_feedback_use_even_lighting">ให้หน้าสว่างสม่ำเสมอขึ้น</string>
+
+	<string name="FaceTec_idscan_type_selection_header">เตรียมสแกน\nเอกสารประจำตัว</string>
+	<string name="FaceTec_idscan_capture_tap_to_focus_message">แตะหน้าจอเพื่อโฟกัส</string>
+	<string name="FaceTec_idscan_capture_hold_steady_message">กรุณาถือให้มั่นคง</string>
+	<string name="FaceTec_idscan_capture_id_front_instruction_message">แสดงด้านหน้าของ ID</string>
+	<string name="FaceTec_idscan_capture_id_back_instruction_message">แสดงด้านหลังของ ID</string>
+	<string name="FaceTec_idscan_review_id_front_instruction_message">ยืนยันว่ารูปภาพมีความชัดเจนและอ่านง่าย</string>
+	<string name="FaceTec_idscan_review_id_back_instruction_message">ยืนยันว่ารูปภาพมีความชัดเจนและอ่านง่าย</string>
+	<string name="FaceTec_idscan_ocr_confirmation_main_header">ตรวจสอบและยืนยัน</string>
+	<string name="FaceTec_idscan_nfc_status_disabled_message">โปรดเปิดใช้งาน NFC\nในการตั้งค่าอุปกรณ์ของคุณ\nเพื่อดำเนินการต่อ</string>
+	<string name="FaceTec_idscan_nfc_status_ready_message">เตรียมพร้อมสแกน\nชิป ePassport ของคุณ</string>
+	<string name="FaceTec_idscan_nfc_status_starting_message">ถือโทรศัพท์ไว้ข้างหลัง\nหน้าปก ePassport\nเพื่อสแกนชิป NFC</string>
+	<string name="FaceTec_idscan_nfc_status_scanning_message">ถือให้มั่นคง,\nกำลังสแกนชิป NFC</string>
+	<string name="FaceTec_idscan_nfc_status_weak_connection_message">มาลอง\nสแกนอีกที</string>
+	<string name="FaceTec_idscan_nfc_status_finished_with_success_message">สแกนเอกสาร\nสมบูรณ์</string>
+	<string name="FaceTec_idscan_nfc_status_finished_with_error_message">ePASSPORT\nไม่สามารถอ่านได้</string>
+	<string name="FaceTec_idscan_nfc_status_skipped_message">การสแกน NFC\nข้ามแล้ว</string>
+
+	<string name="FaceTec_instructions_header_ready_1">เตรียมตัวให้พร้อม</string>
+	<string name="FaceTec_instructions_header_ready_2">เซลฟี่วิดีโอของคุณ</string>
+	<string name="FaceTec_instructions_message_ready_1">จัดกรอบใบหน้าของคุณในวงรี,</string>
+	<string name="FaceTec_instructions_message_ready_2">กดพร้อมและขยับเข้าใกล้</string>
+
+	<string name="FaceTec_presession_frame_your_face">จัดกรอบใบหน้าของคุณในวงรี</string>
+	<string name="FaceTec_presession_position_face_straight_in_oval">มองตรงไปข้างหน้า</string>
+	<string name="FaceTec_presession_hold_steady_3">ถือให้มั่นคง: 3</string>
+	<string name="FaceTec_presession_hold_steady_2">ถือให้มั่นคง: 2</string>
+	<string name="FaceTec_presession_hold_steady_1">ถือให้มั่นคง: 1</string>
+	<string name="FaceTec_presession_eyes_straight_ahead">มองตรงไปข้างหน้า</string>
+	<string name="FaceTec_presession_remove_dark_glasses">ถอดแว่นดำ</string>
+	<string name="FaceTec_presession_neutral_expression">การแสดงออกที่เป็นกลาง, ไม่ยิ้ม</string>
+	<string name="FaceTec_presession_conditions_too_bright">สภาพแวดล้อมสว่างเกินไป</string>
+	<string name="FaceTec_presession_brighten_your_environment">ทำให้สภาพแวดล้อมของคุณสว่างข้ึน</string>
+
+	<string name="FaceTec_result_facescan_upload_message">กำลังอัปโหลด\nเข้ารหัส\nสแกนใบหน้า</string>
+	<string name="FaceTec_result_success_message">สำเร็จ</string>
+	<string name="FaceTec_result_idscan_upload_message">กำลังอัปโหลด\nเข้ารหัส\nสแกนบัตรประชาชน</string>
+	<string name="FaceTec_result_nfc_upload_message">กำลังอัปโหลด\nเข้ารหัส\nรายละเอียด NFC</string>
+	<string name="FaceTec_result_idscan_unsuccess_message">รูปถ่ายติดบัตร\nไม่ตรงกับ\nใบหน้าของผู้สแกน</string>
+	<string name="FaceTec_result_idscan_success_front_side_message">ใบหน้าของคุณ\nตรงกับ ID ของคุณ</string>
+	<string name="FaceTec_result_idscan_success_front_side_back_next_message">ใบหน้าของคุณ\nตรงกับ ID ของคุณ</string>
+	<string name="FaceTec_result_idscan_success_back_side_message">ด้านหลัง ID ถูกจับกุม</string>
+	<string name="FaceTec_result_idscan_success_user_confirmation_message">การยืนยันตัวตน\nสมบูรณ์</string>
+	<string name="FaceTec_result_idscan_success_nfc_message">ข้อมูลชิป NFC\nตรวจสอบแล้ว</string>
+	<string name="FaceTec_result_idscan_skip_or_error_nfc_message">ข้อมูลการสแกน NFC\nอัพโหลดแล้ว</string>
+	<string name="FaceTec_result_idscan_retry_face_did_not_match_message">หน้าตรงกัน\nไม่มากเพียงพอ</string>
+	<string name="FaceTec_result_idscan_retry_id_not_fully_visible_message">เอกสารประจำตัว\nไม่สามารถมองเห็นได้อย่างเต็มที่</string>
+	<string name="FaceTec_result_idscan_retry_ocr_results_not_good_enough_message">ข้อความ ID อ่านไม่ออก</string>
+
+	<string name="FaceTec_retry_header">มาลองกันอีกครั้ง</string>
+	<string name="FaceTec_retry_subheader_message">เราต้องการวิดีโอเซลฟี่ที่ชัดเจนขึ้น</string>
+	<string name="FaceTec_retry_instruction_message_1">การแสดงออกที่เป็นกลาง, ไม่ยิ้ม</string>
+	<string name="FaceTec_retry_instruction_message_2">ไม่มีแสงหรือสว่างเกินไป</string>
+	<string name="FaceTec_retry_instruction_message_3">เบลอเกินไป, ทำความสะอาดกล้องของคุณ</string>
+	<string name="FaceTec_retry_your_image_label">เซลฟี่ของคุณ</string>
+	<string name="FaceTec_retry_ideal_image_label">ท่าในอุดมคติ</string>
+
+</resources>

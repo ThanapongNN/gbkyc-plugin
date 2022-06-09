@@ -1,0 +1,90 @@
+<!-- This is a generated file.  Do not manually edit this and commit changes. -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+	<string name="FaceTec_accessibility_cancel_button">Cancel</string>
+	<string name="FaceTec_accessibility_torch_button">Toggle Light</string>
+
+	<string name="FaceTec_action_ok">OK</string>
+	<string name="FaceTec_action_im_ready">I\'M READY</string>
+	<string name="FaceTec_action_try_again">TRY AGAIN</string>
+	<string name="FaceTec_action_continue">CONTINUE</string>
+	<string name="FaceTec_action_take_photo">TAKE PHOTO</string>
+	<string name="FaceTec_action_retake_photo">RETAKE</string>
+	<string name="FaceTec_action_accept_photo">ACCEPT</string>
+	<string name="FaceTec_action_confirm">CONFIRM INFO</string>
+	<string name="FaceTec_action_scan_nfc">SCAN ePASSPORT</string>
+	<string name="FaceTec_action_skip_nfc">SKIP THIS STEP</string>
+
+	<string name="FaceTec_camera_permission_header">Enable Camera</string>
+	<string name="FaceTec_camera_permission_message_enroll">Please click the button below to enable your selfie camera.</string>
+	<string name="FaceTec_camera_permission_message_auth">Your camera is disabled. Tap below to edit your settings.</string>
+	<string name="FaceTec_camera_permission_enable_camera">ENABLE CAMERA</string>
+	<string name="FaceTec_camera_permission_launch_settings">LAUNCH SETTINGS</string>
+
+	<string name="FaceTec_feedback_center_face">Center Your Face</string>
+	<string name="FaceTec_feedback_face_not_found">Frame Your Face</string>
+	<string name="FaceTec_feedback_face_not_looking_straight_ahead">Look Straight Ahead</string>
+	<string name="FaceTec_feedback_face_not_upright">Hold Your Head Straight</string>
+	<string name="FaceTec_feedback_hold_steady">Hold Steady</string>
+	<string name="FaceTec_feedback_move_phone_away">Move Away</string>
+	<string name="FaceTec_feedback_move_phone_closer">Move Closer</string>
+	<string name="FaceTec_feedback_move_phone_to_eye_level">Move Camera To Eye Level</string>
+	<string name="FaceTec_feedback_use_even_lighting">Light Face More Evenly</string>
+
+	<string name="FaceTec_idscan_type_selection_header">Prepare to Scan\nYour ID Document</string>
+	<string name="FaceTec_idscan_capture_tap_to_focus_message">Tap Screen To Focus</string>
+	<string name="FaceTec_idscan_capture_hold_steady_message">Please Hold Steady</string>
+	<string name="FaceTec_idscan_capture_id_front_instruction_message">Show Front of ID</string>
+	<string name="FaceTec_idscan_capture_id_back_instruction_message">Show Back of ID</string>
+	<string name="FaceTec_idscan_review_id_front_instruction_message">Confirm Photo is Clear &amp; Legible</string>
+	<string name="FaceTec_idscan_review_id_back_instruction_message">Confirm Photo is Clear &amp; Legible</string>
+	<string name="FaceTec_idscan_ocr_confirmation_main_header">Review &amp; Confirm</string>
+	<string name="FaceTec_idscan_nfc_status_disabled_message">Please Enable NFC\nIn Your Device Settings\nTo Continue</string>
+	<string name="FaceTec_idscan_nfc_status_ready_message">Get Ready to Scan\nYour ePassport Chip</string>
+	<string name="FaceTec_idscan_nfc_status_starting_message">Hold Phone to Back\nCover of ePassport\nto Scan NFC Chip</string>
+	<string name="FaceTec_idscan_nfc_status_scanning_message">Hold Steady,\nScanning NFC Chip</string>
+	<string name="FaceTec_idscan_nfc_status_weak_connection_message">Let\'s Try\nAnother Scan</string>
+	<string name="FaceTec_idscan_nfc_status_finished_with_success_message">Document Scan\nComplete</string>
+	<string name="FaceTec_idscan_nfc_status_finished_with_error_message">ePassport Chip\nUnreadable</string>
+	<string name="FaceTec_idscan_nfc_status_skipped_message">NFC Scan\nSkipped</string>
+
+	<string name="FaceTec_instructions_header_ready_1">Get Ready For</string>
+	<string name="FaceTec_instructions_header_ready_2">Your Video Selfie</string>
+	<string name="FaceTec_instructions_message_ready_1">Frame Your Face in the Oval,</string>
+	<string name="FaceTec_instructions_message_ready_2">Press I’m Ready &amp; Move Closer</string>
+
+	<string name="FaceTec_presession_frame_your_face">Frame Your Face In The Oval</string>
+	<string name="FaceTec_presession_position_face_straight_in_oval">Look Straight Ahead</string>
+	<string name="FaceTec_presession_hold_steady_3">Hold Steady For: 3</string>
+	<string name="FaceTec_presession_hold_steady_2">Hold Steady For: 2</string>
+	<string name="FaceTec_presession_hold_steady_1">Hold Steady For: 1</string>
+	<string name="FaceTec_presession_eyes_straight_ahead">Look Straight Ahead</string>
+	<string name="FaceTec_presession_remove_dark_glasses">Remove Dark Glasses</string>
+	<string name="FaceTec_presession_neutral_expression">Neutral Expression, No Smiling</string>
+	<string name="FaceTec_presession_conditions_too_bright">Conditions Too Bright</string>
+	<string name="FaceTec_presession_brighten_your_environment">Brighten Your Environment</string>
+
+	<string name="FaceTec_result_facescan_upload_message">Uploading\nEncrypted\n3D FaceScan</string>
+	<string name="FaceTec_result_success_message">Success</string>
+	<string name="FaceTec_result_idscan_upload_message">Uploading\nEncrypted\nID Scan</string>
+	<string name="FaceTec_result_nfc_upload_message">Uploading\nEncrypted\nNFC Details</string>
+	<string name="FaceTec_result_idscan_unsuccess_message">ID Photo\nDid Not Match\nUser\'s Face</string>
+	<string name="FaceTec_result_idscan_success_front_side_message">Your 3D Face\nMatched Your ID</string>
+	<string name="FaceTec_result_idscan_success_front_side_back_next_message">Your 3D Face\nMatched Your ID</string>
+	<string name="FaceTec_result_idscan_success_back_side_message">Back of ID Captured</string>
+	<string name="FaceTec_result_idscan_success_user_confirmation_message">ID Verification\nComplete</string>
+	<string name="FaceTec_result_idscan_success_nfc_message">NFC Chip Info\nVerified</string>
+	<string name="FaceTec_result_idscan_skip_or_error_nfc_message">NFC Scan Info\nUploaded</string>
+	<string name="FaceTec_result_idscan_retry_face_did_not_match_message">Face Didn\'t Match\nHighly Enough</string>
+	<string name="FaceTec_result_idscan_retry_id_not_fully_visible_message">ID Document\nNot Fully Visible</string>
+	<string name="FaceTec_result_idscan_retry_ocr_results_not_good_enough_message">ID Text Not Legible</string>
+
+	<string name="FaceTec_retry_header">Let\'s Try That Again</string>
+	<string name="FaceTec_retry_subheader_message">We Need a Clearer Video Selfie</string>
+	<string name="FaceTec_retry_instruction_message_1">Neutral Expression, No Smiling</string>
+	<string name="FaceTec_retry_instruction_message_2">No Glare or Extreme Lighting</string>
+	<string name="FaceTec_retry_instruction_message_3">Too Blurry, Clean Your Camera</string>
+	<string name="FaceTec_retry_your_image_label">Your Selfie</string>
+	<string name="FaceTec_retry_ideal_image_label">Ideal Pose</string>
+
+</resources>
