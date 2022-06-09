@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getENV() async {
-    await dotenv.load(fileName: 'packages/gbkyc/lib/.env');
+    await dotenv.load(fileName: 'packages/gbkyc/assets/.env');
   }
 
   @override

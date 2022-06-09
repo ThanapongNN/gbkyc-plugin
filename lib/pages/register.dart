@@ -133,7 +133,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
   setScanIDVisible(bool value) => setState(() => _scanIDVisible = value);
   setDataVisible(bool value) => setState(() => _dataVisible = value);
-  setPinVisible(bool value) => setState(() => _pinSetVisible = value);
+  setPinVisible(bool value) => setState(() => _kycVisible = value);
+  // setPinVisible(bool value) => setState(() => _pinSetVisible = value);
 
   setFirstName(String value) => firstNameController.text = value;
   setLastName(String value) => lastNameController.text = value;
@@ -243,7 +244,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
               "last_name": lastNameController.text,
               "address": addressController.text,
               "birthday": birthdayController.text,
-              "pin": pinController.text,
+              "pin": "111222",
+              // "pin": pinController.text,
               "send_otp_id": sendOtpId!,
               "laser": ocrBackLaser!,
               "province_id": '$indexProvince',
@@ -285,15 +287,18 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
               showDialog(
                 barrierDismissible: false,
                 context: context,
-                builder: (context) =>
-                    CustomDialog(title: 'save_success'.tr, content: 'congratulations'.tr, textConfirm: "back_to_main".tr, onPressedConfirm: () {}
-
-                        // Navigator.pushAndRemoveUntil(
-                        //   context,
-                        //   MaterialPageRoute(builder: (BuildContext context) => const Menu()),
-                        //   (Route<dynamic> route) => false,
-                        // ),
-                        ),
+                builder: (context) => CustomDialog(
+                  title: 'save_success'.tr,
+                  content: 'congratulations'.tr,
+                  textConfirm: "Close".tr,
+                  onPressedConfirm: () {
+                    Navigator.pop(context);
+                    Navigator.of(context, rootNavigator: true).pop({
+                      "success": true,
+                      "message": "รูปถ่ายบัตรประชาชนผ่าน Dopa และผ่านการทำ Liveness Detection",
+                    });
+                  },
+                ),
               );
             }
           } else {
@@ -547,7 +552,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
               "last_name": lastNameController.text,
               "address": addressController.text,
               "birthday": birthdayController.text,
-              "pin": pinController.text,
+              "pin": "111222",
+              // "pin": pinController.text,
               "send_otp_id": sendOtpId!,
               "laser": ocrBackLaser!,
               "province_id": '$indexProvince',
@@ -588,13 +594,14 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                 builder: (context) => CustomDialog(
                   title: 'save_success'.tr,
                   content: 'congratulations_now'.tr,
-                  textConfirm: "back_to_main".tr,
-                  onPressedConfirm: () {},
-                  // Navigator.pushAndRemoveUntil(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const Menu()),
-                  //   (Route<dynamic> route) => false,
-                  // ),
+                  textConfirm: "Close".tr,
+                  onPressedConfirm: () {
+                    Navigator.pop(context);
+                    Navigator.of(context, rootNavigator: true).pop({
+                      "success": true,
+                      "message": "รูปถ่ายบัตรประชาชนไม่ผ่าน Dopa, ส่งถ่ายรูปคู่บัตรประชาชน รอตรวจสอบ",
+                    });
+                  },
                 ),
               );
             }
@@ -743,12 +750,12 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
             onPressedConfirm: () {
               if (!_scanIDVisible) {
                 setState(() {
-                  Get.back();
+                  Navigator.pop(context);
                   _scanIDVisible = true;
                   _dataVisible = false;
                 });
               } else {
-                Get.back();
+                Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => const Register()),
@@ -773,18 +780,18 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
         break;
       case 4:
         setState(() {
-          selectedStep = 3;
+          selectedStep = 2;
           _kycVisible = false;
           _kycVisibleFalse = false;
-          _pinSetVisible = true;
+          _dataVisible = true;
         });
         break;
       case 5:
         setState(() {
-          selectedStep = 3;
+          selectedStep = 2;
           _kycVisible = false;
           _kycVisibleFalse = false;
-          _pinSetVisible = true;
+          _dataVisible = true;
         });
         break;
       default:
@@ -815,7 +822,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                   Stack(children: [
                     Center(
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 50,
+                        width: MediaQuery.of(context).size.width - 80,
                         child: const Divider(
                           color: Color(0xFF02416D),
                           thickness: 1.5,
@@ -826,25 +833,31 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                       ),
                     ),
                     Row(children: [
+                      //1
                       selectedStep == 0 ? _buildSelectedStep() : _buildDoneStep(),
+                      //2
                       selectedStep == 1
                           ? _buildSelectedStep()
                           : selectedStep == 2 || selectedStep == 3 || selectedStep == 4 || selectedStep == 5
                               ? _buildDoneStep()
                               : _buildUnselectedStep(),
+                      //3
                       selectedStep == 2 || selectedStep == 5
                           ? _buildSelectedStep()
                           : selectedStep == 3 || selectedStep == 4
                               ? _buildDoneStep()
                               : _buildUnselectedStep(),
-                      selectedStep == 3
-                          ? _buildSelectedStep()
-                          : selectedStep == 4
-                              ? _buildDoneStep()
-                              : _buildUnselectedStep(),
+                      //4
+                      // selectedStep == 3
+                      //     ? _buildSelectedStep()
+                      //     : selectedStep == 4
+                      //         ? _buildDoneStep()
+                      //         : _buildUnselectedStep(),
+                      //5
                       selectedStep == 4 ? _buildSelectedStep() : _buildUnselectedStep()
                     ]),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      //1
                       selectedStep == 1
                           ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
                           : selectedStep == 2 || selectedStep == 5
@@ -854,6 +867,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                   : selectedStep == 4
                                       ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
                                       : _buildTextStep(selectedStep, 0, '1', 'phone_number'.tr.replaceAll(' number', ''), 0),
+                      //2
                       selectedStep == 2 || selectedStep == 5
                           ? _buildIconCheckStep(selectedStep, 1, 'OTP')
                           : selectedStep == 3
@@ -863,16 +877,19 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                   : selectedStep == 1
                                       ? _buildTextStep(selectedStep, 1, '2', 'OTP', 0)
                                       : _buildTextStep(selectedStep, 1, '', 'OTP', 0),
+                      //3
                       selectedStep == 3 || selectedStep == 4
                           ? _buildIconCheckStep(selectedStep, 2, 'data'.tr)
                           : selectedStep == 2 || selectedStep == 5
                               ? _buildTextStep(selectedStep, 2, '3', 'data'.tr, 0)
                               : _buildTextStep(selectedStep, 2, '', 'data'.tr, 0),
-                      selectedStep == 4
-                          ? _buildIconCheckStep(selectedStep, 3, 'pin'.tr)
-                          : selectedStep == 3
-                              ? _buildTextStep(selectedStep, 3, '4', 'pin'.tr, 0)
-                              : _buildTextStep(selectedStep, 3, '', 'pin'.tr, 0),
+                      //4
+                      // selectedStep == 4
+                      //     ? _buildIconCheckStep(selectedStep, 3, 'pin'.tr)
+                      //     : selectedStep == 3
+                      //         ? _buildTextStep(selectedStep, 3, '4', 'pin'.tr, 0)
+                      //         : _buildTextStep(selectedStep, 3, '', 'pin'.tr, 0),
+                      //5
                       selectedStep == 4 ? _buildTextStep(selectedStep, 4, '5', 'KYC', 0) : _buildTextStep(selectedStep, 4, '', 'KYC', 0)
                     ])
                   ]),
@@ -1103,7 +1120,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                   person: personalInfo,
                   setDataVisible: setDataVisible,
                   setPinVisible: setPinVisible,
-                  setIndex: setSelectedStep,
+                  setSelectedStep: setSelectedStep,
                   setFirstName: setFirstName,
                   setLastName: setLastName,
                   setAddress: setAddress,
@@ -1427,11 +1444,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                             setState(() => isLoading = true);
                             getLivenessFacetec();
 
-                            if (Platform.isIOS) {
-                              Future.delayed(const Duration(seconds: 50), () {
-                                setState(() => isLoading = false);
-                              });
-                            }
                             _timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
                               if (isSuccess!) {
                                 _timer?.cancel();
@@ -1588,7 +1600,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                     "last_name": lastNameController.text,
                                     "address": addressController.text,
                                     "birthday": birthdayController.text,
-                                    "pin": pinController.text,
+                                    "pin": "111222",
+                                    // "pin": pinController.text,
                                     "send_otp_id": sendOtpId!,
                                     "laser": ocrBackLaser!,
                                     "province_id": '$indexProvince',
@@ -1633,13 +1646,14 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                       builder: (context) => CustomDialog(
                                         title: 'save_success'.tr,
                                         content: 'congratulations_now'.tr,
-                                        textConfirm: "back_to_main".tr,
-                                        onPressedConfirm: () {},
-                                        // Navigator.pushAndRemoveUntil(
-                                        //   context,
-                                        //   MaterialPageRoute(builder: (BuildContext context) => const Menu()),
-                                        //   (Route<dynamic> route) => false,
-                                        // ),
+                                        textConfirm: "Close".tr,
+                                        onPressedConfirm: () {
+                                          Navigator.pop(context);
+                                          Navigator.of(context, rootNavigator: true).pop({
+                                            "success": true,
+                                            "message": "รูปถ่ายบัตรประชาชนไม่ผ่าน Dopa, ส่งถ่ายรูปคู่บัตรประชาชน รอตรวจสอบ",
+                                          });
+                                        },
                                       ),
                                     );
                                   }

@@ -65,4 +65,4 @@ flutter:
     - assets/terms_of_service_en.txt
     - assets/terms_of_service_th.txt
     - assets/thai-province-data.json
-
+    - assets/.env

@@ -78,7 +78,7 @@ Map<String, String> en() {
     "changes_profile_save": "Changes to your profile information were saved",
     "channal_wallet": "GB wallet account",
     "choose": "choose ",
-    "Close": "close",
+    "Close": "Close",
     "close_open_card": "Close/Open Card",
     "Code_card": "Code coupon",
     "comingsoon": "Service will be available soon.",

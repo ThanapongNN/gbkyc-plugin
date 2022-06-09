@@ -28,7 +28,7 @@ import '../widgets/select_address.dart';
 class PersonalInfo extends StatefulWidget {
   final dynamic ocrAllFailed;
   final PersonalInfoModel? person;
-  final Function? setIndex;
+  final Function? setSelectedStep;
   final Function? setDataVisible;
   final Function? setScanIDVisible;
   final Function? setPinVisible;
@@ -56,7 +56,7 @@ class PersonalInfo extends StatefulWidget {
     this.setDataVisible,
     this.setScanIDVisible,
     this.setPinVisible,
-    this.setIndex,
+    this.setSelectedStep,
     this.setCareerID,
     this.setWorkAddress,
     this.setWorkName,
@@ -891,9 +891,11 @@ class _PersonalInfoState extends State<PersonalInfo> {
               onPressed: () async {
                 FocusScope.of(context).unfocus();
                 checkValidate = true;
+
                 if (careerId == null) {
                   setState(() => validateCareer = true);
                 }
+
                 if ((indexCareer == 19 || indexCareer == 20) && careerChildId == null) {
                   setState(() => validateCareerChild = true);
                 }
@@ -961,7 +963,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                       widget.setIDCard!(idCardController.text.replaceAll('-', ''));
                       widget.setLaserCode!(laserCodeController.text.replaceAll('-', ''));
                       widget.setPinVisible!(true);
-                      widget.setIndex!(3);
+                      widget.setSelectedStep!(4);
                     }
                   }
                 }
