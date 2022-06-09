@@ -103,18 +103,18 @@ class _WelcomeState extends State<Welcome> {
               text: '${'register'.tr} GB Wallet',
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TermOfService())),
             ),
-            const SizedBox(height: 20),
-            Row(children: [
-              Text('no_member'.tr, style: const TextStyle(color: Colors.grey)),
-              GestureDetector(
-                onTap: () async {
-                  // (await LocalStorage.getUserLoginID()).isEmpty
-                  //     ? Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectorLogin()))
-                  //     : Navigator.push(context, MaterialPageRoute(builder: (context) => const Signin()));
-                },
-                child: Text('login'.tr, style: const TextStyle(color: Color(0xFFFF9F02))),
-              )
-            ]),
+            // const SizedBox(height: 20),
+            // Row(children: [
+            //   Text('no_member'.tr, style: const TextStyle(color: Colors.grey)),
+            //   GestureDetector(
+            //     onTap: () async {
+            //       // (await LocalStorage.getUserLoginID()).isEmpty
+            //       //     ? Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectorLogin()))
+            //       //     : Navigator.push(context, MaterialPageRoute(builder: (context) => const Signin()));
+            //     },
+            //     child: Text('login'.tr, style: const TextStyle(color: Color(0xFFFF9F02))),
+            //   )
+            // ]),
             const SizedBox(height: kToolbarHeight + kBottomNavigationBarHeight),
           ]),
         ),

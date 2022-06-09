@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gbkyc/my_app.dart';
 import 'gbkyc_platform_interface.dart';
 
@@ -6,7 +7,7 @@ class Gbkyc {
     return GbkycPlatform.instance.getPlatformVersion();
   }
 
-  show() {
-    return main();
+  Widget show() {
+    return const MyApp();
   }
 }

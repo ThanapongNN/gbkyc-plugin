@@ -23,22 +23,9 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  HttpOverrides.global = MyHttpOverrides();
-  await dotenv.load(fileName: 'packages/gbkyc/lib/.env');
-
-  configLoading();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(const MyApp());
-  });
-}
-
 void configLoading() {
   EasyLoading.instance
     ..loadingStyle = EasyLoadingStyle.light
-    // ..maskType = EasyLoadingMaskType.custom
-    // ..maskColor = Colors.black.withOpacity(0.1)
     ..radius = 10
     ..contentPadding = const EdgeInsets.all(14)
     ..indicatorWidget = Container(
@@ -66,7 +53,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized();
+    HttpOverrides.global = MyHttpOverrides();
     initDeviceSerial();
+    configLoading();
+    getENV();
+  }
+
+  getENV() async {
+    await dotenv.load(fileName: 'packages/gbkyc/lib/.env');
   }
 
   @override
