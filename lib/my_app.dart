@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:gbkyc/pages/welcome.dart';
+import 'package:gbkyc/pages/register.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
               ],
               background: Container(color: const Color(0xFFF5F5F5))),
         ),
-        home: const Welcome(),
+        home: const Register(),
         title: 'GB Wallet',
         theme: ThemeData(
           primaryColor: const Color(0xFF02416D),

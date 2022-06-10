@@ -871,7 +871,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
         dropdownCareer(),
         if (careerId != null) dropdownCareerChild(),
         if (indexCareer != null) workLable(),
-        const SizedBox(height: 30),
+        const SizedBox(height: 50),
         Row(children: [
           // Expanded(
           //   child: ButtonCancel(

@@ -15,6 +15,7 @@ import 'package:get/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../widgets/button_cancel.dart';
@@ -215,7 +216,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
         );
         final data = res['response']['data'];
 
-        if (data['similarity'] > 90) {
+        if (data['similarity'] > 80) {
           fileNameFrontID = data['card_image_file_name'];
           final resBackID = await PostAPI.callFormData(
             url: '$register3003/users/upload_file',
@@ -231,9 +232,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           fileNameBackID = resBackID['response']['data']['file_name'];
           fileNameLiveness = data['face_image_file_name'];
 
-          await imgFrontIDCard!.delete();
-          await imgBackIDCard!.delete();
-          await imgLiveness!.delete();
+          // await imgFrontIDCard!.delete();
+          // await imgBackIDCard!.delete();
+          // await imgLiveness!.delete();
 
           resCreateUser = await PostAPI.call(
             url: '$register3003/users',
@@ -265,55 +266,18 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
           setState(() => isLoading = false);
           if (resCreateUser['success']) {
-            _userLoginID = resCreateUser['response']['data']['user_login_id'];
-            var data = await PostAPI.call(
-              url: '$register3003/user_logins/$_userLoginID/login',
-              headers: Authorization.none,
-              body: {"imei": StateStore.deviceSerial.value, "pin": pinController.text},
-            );
-
-            if (data['success']) {
-              await LocalStorage.setAutoPIN(false);
-              await LocalStorage.setUserLoginID(_userLoginID!);
-              await LocalStorage.setIsCorporate(false);
-              await LocalStorage.setTimeToken(DateTime.now().toString());
-
-              StateStore.role.value = data['response']['data']['role_code'];
-              StateStore.pin.value = pinController.text;
-              StateStore.token.value = data['response']['data']['token'];
-              StateStore.approve.value = data['response']['data']['is_ocr_approve'];
-              StateStore.isCorporate.value = false;
-
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) => CustomDialog(
-                  title: 'save_success'.tr,
-                  content: 'congratulations'.tr,
-                  textConfirm: "Close".tr,
-                  onPressedConfirm: () {
-                    Navigator.pop(context);
-                    Navigator.of(context, rootNavigator: true).pop({
-                      "success": true,
-                      "message": "รูปถ่ายบัตรประชาชนผ่าน Dopa และผ่านการทำ Liveness Detection",
-                    });
-                  },
-                ),
-              );
-            }
-          } else {
             showDialog(
               barrierDismissible: false,
               context: context,
               builder: (context) => CustomDialog(
-                title: "Something_went_wrong".tr,
-                content: errorMessages(resCreateUser),
-                avatar: false,
+                title: 'save_success'.tr,
+                content: 'congratulations'.tr,
+                textConfirm: "Close".tr,
                 onPressedConfirm: () {
-                  Get.back();
-                  setState(() {
-                    selectedStep = 2;
-                    _kycVisible = false;
+                  Navigator.pop(context);
+                  Navigator.of(context, rootNavigator: true).pop({
+                    "success": true,
+                    "message": "รูปถ่ายบัตรประชาชนผ่าน Dopa และผ่านการทำ Liveness Detection",
                   });
                 },
               ),
@@ -402,9 +366,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                             (v) async {
                               if (v != null) {
                                 int fileSize = await getFileSize(filepath: v);
-                                if (pathSelfie.isNotEmpty) {
-                                  await File(pathSelfie).delete();
-                                }
+                                // if (pathSelfie.isNotEmpty) {
+                                //   await File(pathSelfie).delete();
+                                // }
                                 if (!isImage(v)) {
                                   showDialog(
                                     barrierDismissible: true,
@@ -539,9 +503,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           );
           fileNameSelfieID = resSelfieID['response']['data']['file_name'];
 
-          await File(pathFrontCitizen).delete();
-          await File(pathBackCitizen).delete();
-          await File(pathSelfie).delete();
+          // await File(pathFrontCitizen).delete();
+          // await File(pathBackCitizen).delete();
+          // await File(pathSelfie).delete();
 
           resCreateUser = await PostAPI.call(
             url: '$register3003/users',
@@ -747,8 +711,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
             content: 'Do_you_want_to_go_back_previous_step'.tr,
             exclamation: true,
             buttonCancel: true,
-            onPressedConfirm: () {
+            onPressedConfirm: () async {
               if (!_scanIDVisible) {
+                await Permission.camera.request();
                 setState(() {
                   Navigator.pop(context);
                   _scanIDVisible = true;
@@ -890,7 +855,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                       //         ? _buildTextStep(selectedStep, 3, '4', 'pin'.tr, 0)
                       //         : _buildTextStep(selectedStep, 3, '', 'pin'.tr, 0),
                       //5
-                      selectedStep == 4 ? _buildTextStep(selectedStep, 4, '5', 'KYC', 0) : _buildTextStep(selectedStep, 4, '', 'KYC', 0)
+                      selectedStep == 4 ? _buildTextStep(selectedStep, 4, '4', 'KYC', 0) : _buildTextStep(selectedStep, 4, '', 'KYC', 0)
                     ])
                   ]),
                 ]),
@@ -1491,9 +1456,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                 (v) async {
                                   if (v != null) {
                                     int fileSize = await getFileSize(filepath: v);
-                                    if (pathSelfie.isNotEmpty) {
-                                      await File(pathSelfie).delete();
-                                    }
+                                    // if (pathSelfie.isNotEmpty) {
+                                    //   await File(pathSelfie).delete();
+                                    // }
                                     if (!isImage(v)) {
                                       showDialog(
                                         barrierDismissible: true,
@@ -1587,9 +1552,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                 );
                                 fileNameSelfieID = resSelfieID['response']['data']['file_name'];
 
-                                await imgFrontIDCard!.delete();
-                                await imgBackIDCard!.delete();
-                                await File(pathSelfie).delete();
+                                // await imgFrontIDCard!.delete();
+                                // await imgBackIDCard!.delete();
+                                // await File(pathSelfie).delete();
 
                                 resCreateUser = await PostAPI.call(
                                   url: '$register3003/users',

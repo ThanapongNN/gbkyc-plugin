@@ -195,7 +195,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
     if (isBusy) return;
     isBusy = true;
     final recognisedText = await textDetector.processImage(inputImage);
-    // debugPrint(recognisedText.text);
+    debugPrint(recognisedText.text);
     if (RegExp(r'Thai National|dentification Number').hasMatch(recognisedText.text) &&
         RegExp(r'of lssue|of Expiry').hasMatch(recognisedText.text) &&
         !_takeFront &&
@@ -480,7 +480,6 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
     try {
       setState(() => isLoading = true);
       await _controller!.takePicture().then((v) => frontIDPath = v.path);
-
       List<int> imageBytes = File(frontIDPath!).readAsBytesSync();
 
       String imgB64 = base64Encode(imageBytes);
