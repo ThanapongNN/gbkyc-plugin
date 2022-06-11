@@ -72,9 +72,7 @@ class _MyAppState extends State<MyApp> {
     initializeDateFormatting(Get.deviceLocale.toString(), null); //ตั้งปฏิทินแรกตามพื้นที่
 
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AddressBloc()),
-      ],
+      providers: [BlocProvider(create: (_) => AddressBloc())],
       child: GetMaterialApp(
         translations: Messages(),
         locale: Get.deviceLocale,
@@ -110,9 +108,7 @@ class _MyAppState extends State<MyApp> {
           ),
           buttonTheme: ButtonThemeData(
             height: 50,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
             textTheme: ButtonTextTheme.accent,
           ),
           inputDecorationTheme: InputDecorationTheme(
@@ -124,9 +120,7 @@ class _MyAppState extends State<MyApp> {
               borderSide: const BorderSide(color: Color(0xFF02416D)),
               borderRadius: BorderRadius.circular(8),
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: Colors.white,
             labelStyle: const TextStyle(fontSize: 16, color: Colors.black54),
@@ -138,9 +132,7 @@ class _MyAppState extends State<MyApp> {
             bodyText1: TextStyle(fontFamily: 'kanit', package: 'gbkyc'),
             bodyText2: TextStyle(fontFamily: 'kanit', package: 'gbkyc'),
           ),
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Color(0xFF02416D),
-          ),
+          textSelectionTheme: const TextSelectionThemeData(cursorColor: Color(0xFF02416D)),
           scaffoldBackgroundColor: Colors.white,
         ),
       ),

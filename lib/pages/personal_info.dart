@@ -11,7 +11,9 @@ import 'package:gbkyc/pages/register.dart';
 import 'package:gbkyc/scan_id_card.dart';
 import 'package:gbkyc/state_store.dart';
 import 'package:gbkyc/utils/file_uitility.dart';
+import 'package:gbkyc/widgets/button_confirm.dart';
 import 'package:gbkyc/widgets/custom_dialog.dart';
+import 'package:gbkyc/widgets/select_address.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +23,6 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
-import '../widgets/button_confirm.dart';
-import '../widgets/select_address.dart';
 
 class PersonalInfo extends StatefulWidget {
   final dynamic ocrAllFailed;
@@ -132,7 +131,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
   int? indexSubDistrict;
 
   bool checkValidate = false;
-  bool? skipInfomation = false;
+  bool skipInfomation = false;
   bool validateCareer = false;
   bool validateCareerChild = false;
 
@@ -278,7 +277,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
   }
 
   Widget workLable() {
-    return (!skipInfomation!)
+    return (!skipInfomation)
         ? Column(children: [
             const SizedBox(height: 20),
             TextFormField(
@@ -301,23 +300,25 @@ class _PersonalInfoState extends State<PersonalInfo> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                    child: TextFormField(
-                        controller: workAddressShowController,
-                        readOnly: true,
-                        style: const TextStyle(fontSize: 15),
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                            labelText: "district_address".tr,
-                            hintText: "district_address".tr,
-                            suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54)),
-                        validator: (v) {
-                          if (v!.isEmpty && checkValidate) {
-                            return 'please_enter'.tr;
-                          }
-                          return null;
-                        },
-                        onChanged: (v) => _formKey.currentState!.validate(),
-                        onTap: () => showModalSearchAddress('workAddress')))
+                  child: TextFormField(
+                    controller: workAddressShowController,
+                    readOnly: true,
+                    style: const TextStyle(fontSize: 15),
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                        labelText: "district_address".tr,
+                        hintText: "district_address".tr,
+                        suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54)),
+                    validator: (v) {
+                      if (v!.isEmpty && checkValidate) {
+                        return 'please_enter'.tr;
+                      }
+                      return null;
+                    },
+                    onChanged: (v) => _formKey.currentState!.validate(),
+                    onTap: () => showModalSearchAddress('workAddress'),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: 20),

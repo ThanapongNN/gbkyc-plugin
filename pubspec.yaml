@@ -23,7 +23,6 @@ dependencies:
   flutter_easyloading: ^3.0.3
   flutter_iconly:
   get: ^4.6.1
-  get_storage: ^2.0.3
   google_mlkit_text_recognition: ^0.3.0
   http: ^0.13.4
   image: ^3.1.1

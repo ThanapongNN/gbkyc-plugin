@@ -5,11 +5,20 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gbkyc/api/config_api.dart';
 import 'package:gbkyc/api/get_api.dart';
+import 'package:gbkyc/api/post_api.dart';
+import 'package:gbkyc/personal_info_model.dart';
+import 'package:gbkyc/scan_id_card.dart';
+import 'package:gbkyc/state_store.dart';
 import 'package:gbkyc/utils/error_messages.dart';
 import 'package:gbkyc/utils/file_uitility.dart';
 import 'package:gbkyc/utils/mask_text_formatter.dart';
-import 'package:gbkyc/utils/regular_expression.dart';
+import 'package:gbkyc/widgets/button_cancel.dart';
+import 'package:gbkyc/widgets/button_confirm.dart';
+import 'package:gbkyc/widgets/custom_dialog.dart';
+import 'package:gbkyc/widgets/page_loading.dart';
+import 'package:gbkyc/widgets/time_otp.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/utils.dart';
 import 'package:http/http.dart' as http;
@@ -18,19 +27,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../widgets/button_cancel.dart';
-import '../widgets/button_confirm.dart';
-import '../api/config_api.dart';
-import '../widgets/custom_dialog.dart';
-import '../local_storage.dart';
-import '../widgets/numpad.dart';
-import '../widgets/page_loading.dart';
 import 'personal_info.dart';
-import '../personal_info_model.dart';
-import '../api/post_api.dart';
-import '../scan_id_card.dart';
-import '../state_store.dart';
-import '../widgets/time_otp.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -48,18 +45,17 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   dynamic resCreateUser, onTapRecognizer, imgLivenessUint8;
   final format = DateFormat('dd/MM/yyyy');
 
-  String? _userLoginID;
   String txPhoneNumber = "";
   String? sendOtpId;
   String countryCode = "+66";
   String? ocrBackLaser;
-  late String pathFrontCitizen;
-  late String pathBackCitizen;
+  String? pathFrontCitizen;
+  String? pathBackCitizen;
   String pathSelfie = '';
   String? fileNameFrontID;
-  late String fileNameBackID;
+  String? fileNameBackID;
   String fileNameSelfieID = '';
-  String? fileNameLiveness = '';
+  String fileNameLiveness = '';
 
   int length = 6;
   int selectedStep = 0;
@@ -71,19 +67,16 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   bool _otpVisible = false;
   bool _scanIDVisible = false;
   bool _dataVisible = false;
-  bool _pinSetVisible = false;
-  bool _pinConfirmVisible = false;
   bool _kycVisible = false;
   bool _kycVisibleFalse = false;
 
   bool hasError = false;
   bool expiration = true;
-  bool? isSuccess = false;
+  bool isSuccess = false;
   bool isLoading = false;
-  bool resetPIN = false;
 
   bool validatePhonenumber = false;
-  bool? ocrFailedAll = false;
+  bool ocrFailedAll = false;
 
   DateTime? datetimeOTP;
 
@@ -127,7 +120,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && !isSuccess!) setState(() => isLoading = false);
+    if (state == AppLifecycleState.resumed && !isSuccess) setState(() => isLoading = false);
   }
 
   setSelectedStep(int index) => setState(() => selectedStep = index);
@@ -165,10 +158,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
     return _dataVisible;
   }
 
-  bool getPinVisible() {
-    return _pinSetVisible;
-  }
-
   String? getLaserCode() {
     return ocrBackLaser;
   }
@@ -201,7 +190,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getResultFacetec() async {
     try {
       isSuccess = await facetecChannel.invokeMethod('getResultFacetec');
-      if (isSuccess!) {
+      if (isSuccess) {
         setState(() => isLoading = true);
         await getImageFacetec();
         final res = await PostAPI.callFormData(
@@ -232,10 +221,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           fileNameBackID = resBackID['response']['data']['file_name'];
           fileNameLiveness = data['face_image_file_name'];
 
-          // await imgFrontIDCard!.delete();
-          // await imgBackIDCard!.delete();
-          // await imgLiveness!.delete();
-
           resCreateUser = await PostAPI.call(
             url: '$register3003/users',
             headers: Authorization.auth2,
@@ -256,9 +241,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
               "work_name": workNameController.text,
               "work_address": '${workAddressController.text} ${workAddressSerchController.text}',
               "file_front_citizen": fileNameFrontID!,
-              "file_back_citizen": fileNameBackID,
+              "file_back_citizen": fileNameBackID!,
               "file_selfie": fileNameSelfieID,
-              "file_liveness": fileNameLiveness!,
+              "file_liveness": fileNameLiveness,
               "imei": StateStore.deviceSerial.value,
               "fcm_token": StateStore.fcmToken.value,
             },
@@ -266,6 +251,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
           setState(() => isLoading = false);
           if (resCreateUser['success']) {
+            await imgFrontIDCard!.delete();
+            await imgBackIDCard!.delete();
+            await imgLiveness!.delete();
             showDialog(
               barrierDismissible: false,
               context: context,
@@ -433,199 +421,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
     );
   }
 
-  onChangeSetPIN(String number) {
-    if (regExpPIN.hasMatch(number)) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => CustomDialog(
-          title: 'invalid_pin'.tr,
-          content: 'You_set_a_PIN_that_is_too_strong_to_guess'.tr,
-          avatar: false,
-          onPressedConfirm: () {
-            setState(() => resetPIN = true);
-            Get.back();
-          },
-        ),
-      );
-    } else if (number.length == length) {
-      setState(() {
-        pinController.text = number;
-        _pinSetVisible = false;
-        _pinConfirmVisible = true;
-        resetPIN = true;
-      });
-    }
-  }
-
-  onChangeConfirmPIN(String number) async {
-    if (number.length == length) {
-      if (number == pinController.text) {
-        if (pathSelfie.isNotEmpty) {
-          setState(() => isLoading = true);
-
-          final resFrontID = await PostAPI.callFormData(
-            url: '$register3003/users/upload_file',
-            headers: Authorization.auth2,
-            files: [
-              http.MultipartFile.fromBytes(
-                'image',
-                File(pathFrontCitizen).readAsBytesSync(),
-                filename: File(pathFrontCitizen).path.split("/").last,
-              )
-            ],
-          );
-          fileNameFrontID = resFrontID['response']['data']['file_name'];
-
-          final resBackID = await PostAPI.callFormData(
-            url: '$register3003/users/upload_file',
-            headers: Authorization.auth2,
-            files: [
-              http.MultipartFile.fromBytes(
-                'image',
-                File(pathBackCitizen).readAsBytesSync(),
-                filename: File(pathBackCitizen).path.split("/").last,
-              )
-            ],
-          );
-          fileNameBackID = resBackID['response']['data']['file_name'];
-
-          final resSelfieID = await PostAPI.callFormData(
-            url: '$register3003/users/upload_file',
-            headers: Authorization.auth2,
-            files: [
-              http.MultipartFile.fromBytes(
-                'image',
-                File(pathSelfie).readAsBytesSync(),
-                filename: File(pathSelfie).path.split("/").last,
-              )
-            ],
-          );
-          fileNameSelfieID = resSelfieID['response']['data']['file_name'];
-
-          // await File(pathFrontCitizen).delete();
-          // await File(pathBackCitizen).delete();
-          // await File(pathSelfie).delete();
-
-          resCreateUser = await PostAPI.call(
-            url: '$register3003/users',
-            headers: Authorization.auth2,
-            body: {
-              "id_card": idCardController.text,
-              "first_name": firstNameController.text,
-              "last_name": lastNameController.text,
-              "address": addressController.text,
-              "birthday": birthdayController.text,
-              "pin": "111222",
-              // "pin": pinController.text,
-              "send_otp_id": sendOtpId!,
-              "laser": ocrBackLaser!,
-              "province_id": '$indexProvince',
-              "district_id": '$indexDistric',
-              "sub_district_id": '$indexSubDistric',
-              "career_id": '$careerID',
-              "work_name": workNameController.text,
-              "work_address": '${workAddressController.text} ${workAddressSerchController.text}',
-              "file_front_citizen": fileNameFrontID!,
-              "file_back_citizen": fileNameBackID,
-              "file_selfie": fileNameSelfieID,
-              "file_liveness": fileNameLiveness!,
-              "imei": StateStore.deviceSerial.value,
-              "fcm_token": StateStore.fcmToken.value,
-            },
-          );
-
-          if (resCreateUser['success']) {
-            _userLoginID = resCreateUser['response']['data']['user_login_id'];
-            var data = await PostAPI.call(
-              url: '$register3003/user_logins/$_userLoginID/login',
-              headers: Authorization.none,
-              body: {"imei": StateStore.deviceSerial.value, "pin": pinController.text},
-            );
-
-            if (data['success']) {
-              StateStore.token.value = data['response']['data']['token'];
-              StateStore.approve.value = data['response']['data']['is_ocr_approve'];
-              StateStore.role.value = data['response']['data']['role_code'];
-              StateStore.lastLoginAt.value = data['response']['data']['last_login_at'] ?? '';
-              await LocalStorage.setUserLoginID('');
-              await LocalStorage.setAutoPIN(false);
-              await LocalStorage.setTimeToken(DateTime.now().toString());
-
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) => CustomDialog(
-                  title: 'save_success'.tr,
-                  content: 'congratulations_now'.tr,
-                  textConfirm: "Close".tr,
-                  onPressedConfirm: () {
-                    Navigator.pop(context);
-                    Navigator.of(context, rootNavigator: true).pop({
-                      "success": true,
-                      "message": "รูปถ่ายบัตรประชาชนไม่ผ่าน Dopa, ส่งถ่ายรูปคู่บัตรประชาชน รอตรวจสอบ",
-                    });
-                  },
-                ),
-              );
-            }
-          } else {
-            setState(() {
-              isLoading = false;
-              resetPIN = true;
-            });
-            showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) => CustomDialog(
-                title: "Something_went_wrong".tr,
-                content: errorMessages(resCreateUser),
-                avatar: false,
-                onPressedConfirm: () {
-                  Get.back();
-                  setState(() {
-                    selectedStep = 2;
-                    _pinConfirmVisible = false;
-                  });
-                },
-              ),
-            );
-          }
-        } else {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => CustomDialog(
-              title: 'success_pin'.tr,
-              content: 'sub_success_pin'.tr,
-              onPressedConfirm: () => setState(() {
-                Get.back();
-                selectedStep = 4;
-                _pinConfirmVisible = false;
-                _kycVisible = true;
-                resetPIN = true;
-              }),
-            ),
-          );
-        }
-      } else {
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => CustomDialog(
-            title: 'invalid_pin'.tr,
-            content: 'please_enter_again'.tr,
-            avatar: false,
-            onPressedConfirm: () {
-              setState(() => resetPIN = true);
-              Navigator.of(context).pop();
-            },
-          ),
-        );
-      }
-    }
-  }
-
   autoSubmitPhoneNumber() async {
     txPhoneNumber = phonenumberController.text.replaceAll('-', '');
     setState(() => validatePhonenumber = true);
@@ -679,19 +474,10 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
     }
   }
 
-  checkResetPIN(state) {
-    if (state) {
-      Future.delayed(
-        const Duration(milliseconds: 500),
-        () => setState(() => resetPIN = false),
-      );
-    }
-  }
-
   onBackButton(int step) {
     switch (step) {
       case 0:
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: true).pop();
         break;
       case 1:
         setState(() {
@@ -730,19 +516,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           ),
         );
         break;
-      case 3:
-        if (_pinConfirmVisible) {
-          setState(() {
-            _pinSetVisible = true;
-            _pinConfirmVisible = false;
-          });
-        } else {
-          setState(() {
-            selectedStep = 2;
-            _pinSetVisible = false;
-          });
-        }
-        break;
       case 4:
         setState(() {
           selectedStep = 2;
@@ -763,494 +536,91 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    checkResetPIN(resetPIN);
-    return WillPopScope(
-      onWillPop: () async {
-        onBackButton(selectedStep);
-        return true;
-      },
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: AppBar(
-            leading: BackButton(onPressed: () => onBackButton(selectedStep)),
-            title: Text('register'.tr),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(80),
-              child: Container(
-                height: 80,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(children: [
-                  Stack(children: [
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 80,
-                        child: const Divider(
-                          color: Color(0xFF02416D),
-                          thickness: 1.5,
-                          height: 30,
-                          indent: 25,
-                          endIndent: 25,
-                        ),
-                      ),
-                    ),
-                    Row(children: [
-                      //1
-                      selectedStep == 0 ? _buildSelectedStep() : _buildDoneStep(),
-                      //2
-                      selectedStep == 1
-                          ? _buildSelectedStep()
-                          : selectedStep == 2 || selectedStep == 3 || selectedStep == 4 || selectedStep == 5
-                              ? _buildDoneStep()
-                              : _buildUnselectedStep(),
-                      //3
-                      selectedStep == 2 || selectedStep == 5
-                          ? _buildSelectedStep()
-                          : selectedStep == 3 || selectedStep == 4
-                              ? _buildDoneStep()
-                              : _buildUnselectedStep(),
-                      //4
-                      // selectedStep == 3
-                      //     ? _buildSelectedStep()
-                      //     : selectedStep == 4
-                      //         ? _buildDoneStep()
-                      //         : _buildUnselectedStep(),
-                      //5
-                      selectedStep == 4 ? _buildSelectedStep() : _buildUnselectedStep()
-                    ]),
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      //1
-                      selectedStep == 1
-                          ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
-                          : selectedStep == 2 || selectedStep == 5
-                              ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
-                              : selectedStep == 3
-                                  ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
-                                  : selectedStep == 4
-                                      ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
-                                      : _buildTextStep(selectedStep, 0, '1', 'phone_number'.tr.replaceAll(' number', ''), 0),
-                      //2
-                      selectedStep == 2 || selectedStep == 5
-                          ? _buildIconCheckStep(selectedStep, 1, 'OTP')
-                          : selectedStep == 3
-                              ? _buildIconCheckStep(selectedStep, 1, 'OTP')
-                              : selectedStep == 4
-                                  ? _buildIconCheckStep(selectedStep, 1, 'OTP')
-                                  : selectedStep == 1
-                                      ? _buildTextStep(selectedStep, 1, '2', 'OTP', 0)
-                                      : _buildTextStep(selectedStep, 1, '', 'OTP', 0),
-                      //3
-                      selectedStep == 3 || selectedStep == 4
-                          ? _buildIconCheckStep(selectedStep, 2, 'data'.tr)
-                          : selectedStep == 2 || selectedStep == 5
-                              ? _buildTextStep(selectedStep, 2, '3', 'data'.tr, 0)
-                              : _buildTextStep(selectedStep, 2, '', 'data'.tr, 0),
-                      //4
-                      // selectedStep == 4
-                      //     ? _buildIconCheckStep(selectedStep, 3, 'pin'.tr)
-                      //     : selectedStep == 3
-                      //         ? _buildTextStep(selectedStep, 3, '4', 'pin'.tr, 0)
-                      //         : _buildTextStep(selectedStep, 3, '', 'pin'.tr, 0),
-                      //5
-                      selectedStep == 4 ? _buildTextStep(selectedStep, 4, '4', 'KYC', 0) : _buildTextStep(selectedStep, 4, '', 'KYC', 0)
-                    ])
-                  ]),
-                ]),
-              ),
-            ),
-          ),
-          body: SafeArea(
-            top: false,
-            child: Stack(children: [
-              Visibility(
-                visible: _phoneVisible,
-                maintainState: true,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                  child: Form(
-                    key: _formKeyPhoneNumber,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'register'.tr,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        Text(
-                          'enter_to_otp'.tr,
-                          style: const TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        const SizedBox(height: 10),
-                        Column(children: [
-                          // Container(
-                          //   height: 60,
-                          //   width: double.infinity,
-                          //   padding: EdgeInsets.all(9),
-                          //   decoration: BoxDecoration(
-                          //     color: Color(0xFFF0F0F0),
-                          //     border: Border.all(color: Color(0xFFD2D2D2)),
-                          //     borderRadius:
-                          //         BorderRadius.all(Radius.circular(8)),
-                          //   ),
-                          //   child: Row(children: [
-                          //     Column(
-                          //         mainAxisAlignment:
-                          //             MainAxisAlignment.spaceAround,
-                          //         children: [
-                          //           Text('country'.tr,
-                          //               style: TextStyle(
-                          //                   fontSize: 12,
-                          //                   color: Colors.grey)),
-                          //           Image.asset(
-                          //               'assets/images/Thailand-flag.png',
-                          //               height: 17,
-                          //               width: 25)
-                          //         ]),
-                          //     SizedBox(width: 15),
-                          //     Column(
-                          //         mainAxisAlignment: MainAxisAlignment.end,
-                          //         children: [
-                          //           Text('thai'.tr,
-                          //               style: TextStyle(fontSize: 15))
-                          //         ])
-                          //   ]),
-                          // ),
-                          // SizedBox(height: 15),
-                          SizedBox(
-                            width: double.infinity,
-                            child: TextFormField(
-                              controller: phonenumberController,
-                              maxLength: 12,
-                              validator: (v) {
-                                if (v!.isEmpty) {
-                                  return 'please_enter'.tr;
-                                } else if (v.length != 12 && validatePhonenumber) {
-                                  return 'pls_10digits'.tr;
-                                }
-                                return null;
-                              },
-                              onChanged: (v) async {
-                                _formKeyPhoneNumber.currentState!.validate();
-                                if (v.length == 12) {
-                                  FocusScope.of(context).unfocus();
-                                  await autoSubmitPhoneNumber();
-                                }
-                              },
-                              decoration: InputDecoration(labelText: 'phone_num'.tr),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: <TextInputFormatter>[MaskTextFormatter.phoneNumber],
-                            ),
-                          )
-                        ]),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: _otpVisible,
-                maintainState: true,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'confirm_phone_num'.tr,
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      Text(
-                        '${'enter_pin_sent_phone'.tr} ${phonenumberController.text}',
-                        style: const TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: formkeyOTP,
-                        child: PinCodeTextField(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          appContext: context,
-                          pastedTextStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          length: 6,
-                          obscureText: false,
-                          obscuringCharacter: '*',
-                          animationType: AnimationType.fade,
-                          pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.box,
-                            borderRadius: BorderRadius.circular(5),
-                            fieldHeight: 50,
-                            fieldWidth: 43,
-                            activeColor: hasError ? Colors.red : Colors.white,
-                            selectedColor: const Color.fromRGBO(2, 65, 109, 1),
-                            inactiveColor: const Color.fromRGBO(2, 65, 109, 1),
-                            disabledColor: Colors.grey,
-                            activeFillColor: Colors.white,
-                            selectedFillColor: const Color.fromRGBO(2, 65, 109, 1),
-                            inactiveFillColor: Colors.white,
-                          ),
-                          cursorColor: Colors.white,
-                          animationDuration: const Duration(milliseconds: 300),
-                          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          backgroundColor: Colors.white,
-                          enableActiveFill: true,
-                          errorAnimationController: errorController,
-                          controller: otpController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          boxShadows: const [BoxShadow(offset: Offset(0, 1), color: Colors.black12, blurRadius: 10)],
-                          onChanged: (v) {
-                            setState(() => hasError = false);
-                            if (v.length == 6) autoSubmitOTP();
-                          },
-                          beforeTextPaste: (text) {
-                            return true;
-                          },
-                        ),
-                      ),
-                      timeOTP(
-                        expiration: expiration,
-                        datetimeOTP: datetimeOTP,
-                        onPressed: () async {
-                          var otpId = await PostAPI.call(
-                            url: '$register3003/send_otps',
-                            headers: Authorization.auth2,
-                            body: {"phone_number": txPhoneNumber, "country_code": countryCode},
-                          );
+  Widget _buildSuggestion(String topic) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF02416D), size: 24),
+      Text(topic, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+    ]);
+  }
 
-                          if (otpId['success']) {
-                            setState(() {
-                              sendOtpId = otpId['response']['data']['send_otp_id'];
-                              datetimeOTP = DateTime.parse(otpId['response']['data']['expiration_at']);
+  Widget _buildIconCheckStep(int step, int state, String name) {
+    return Expanded(
+      child: Column(children: [
+        const SizedBox(
+          height: 30,
+          width: 50,
+          child: Icon(Icons.check, color: Colors.white, size: 16),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          name,
+          softWrap: false,
+          style: TextStyle(fontSize: 12, color: step == state ? const Color(0xFF106BAB) : const Color(0xFF191919)),
+        ),
+      ]),
+    );
+  }
 
-                              otpController.clear();
-                              expiration = false;
-                            });
-                          }
-                        },
-                        onDone: () => setState(() => expiration = true),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: _scanIDVisible,
-                maintainState: true,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'idcard'.tr,
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      Text(
-                        'idcard_security'.tr,
-                        style: const TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                      const SizedBox(height: 10),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('suggestion'.tr, style: const TextStyle(fontSize: 20)),
-                          _buildSuggestion('photolight'.tr),
-                          _buildSuggestion('photoandIDcard_info'.tr),
-                          _buildSuggestion('photoandIDcard_glare'.tr),
-                          _buildSuggestion('idcard_official'.tr),
-                        ]),
-                      ),
-                      const SizedBox(height: 10),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'idcard_policy'.tr,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: _dataVisible,
-                child: PersonalInfo(
-                  ocrAllFailed: ocrFailedAll,
-                  person: personalInfo,
-                  setDataVisible: setDataVisible,
-                  setPinVisible: setPinVisible,
-                  setSelectedStep: setSelectedStep,
-                  setFirstName: setFirstName,
-                  setLastName: setLastName,
-                  setAddress: setAddress,
-                  setAddressSearch: setAddressSearch,
-                  setBirthday: setBirthday,
-                  setIDCard: setIDCard,
-                  setLaserCode: setLaserCode,
-                  setCareerID: setCareerID,
-                  setWorkName: setWorkName,
-                  setWorkAddress: setWorkAddress,
-                  setWorkAddressSearch: setWorkAddressSearch,
-                  setindexDistric: setindexDistric,
-                  setindexSubDistric: setindexSubDistric,
-                  setindexProvince: setindexProvince,
-                  setFileFrontCitizen: setFileFrontCitizen,
-                  setFileBackCitizen: setFileBackCitizen,
-                  setFileSelfie: setFileSelfie,
-                ),
-              ),
-              Visibility(
-                visible: _pinSetVisible,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.white,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Text('set_pin'.tr, style: const TextStyle(fontSize: 24)),
-                      Text('enter_pin'.tr, style: const TextStyle(fontSize: 16, color: Colors.grey)),
-                      Numpad(length: length, onChange: onChangeSetPIN, reset: resetPIN)
-                    ]),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: _pinConfirmVisible,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.white,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'confirm_pin'.tr,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        Text(
-                          'confirm_enter_pin'.tr,
-                          style: const TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                        Numpad(
-                          length: length,
-                          onChange: onChangeConfirmPIN,
-                          reset: resetPIN,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: _kycVisible,
-                maintainState: true,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Column(children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'scanface'.tr,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        Text(
-                          'scanface_verify'.tr,
-                          style: const TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(children: [
-                          const Icon(
-                            Icons.check_circle_outline,
-                            color: Color(0xFF27AE60),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            'photolight'.tr,
-                            style: const TextStyle(color: Colors.black54, fontSize: 16),
-                          ),
-                        ]),
-                        Row(children: [
-                          const Icon(
-                            Icons.check_circle_outline,
-                            color: Color(0xFF27AE60),
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            'faceposition'.tr,
-                            style: const TextStyle(color: Colors.black54, fontSize: 16),
-                          ),
-                        ]),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(children: [
-                          Image.asset('assets/images/FaceScan-1.jpg', package: 'gbkyc', scale: 5),
-                          Text('Keep_your_face_straight'.tr, textAlign: TextAlign.center)
-                        ]),
-                        const SizedBox(width: 20),
-                        Column(children: [
-                          Image.asset('assets/images/FaceScan-2.jpg', package: 'gbkyc', scale: 5),
-                          Text('Shoot_in_a_well_lit_area'.tr, textAlign: TextAlign.center)
-                        ])
-                      ],
-                    ),
-                  ]),
-                ),
-              ),
-              Visibility(
-                visible: _kycVisibleFalse,
-                maintainState: true,
-                child: Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: ListView(physics: const ClampingScrollPhysics(), padding: const EdgeInsets.all(20), children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: pathSelfie == ''
-                          ? Image.asset(
-                              'assets/icons/idCardD.png', package: 'gbkyc',
-                              height: 300,
-                              // fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              File(pathSelfie),
-                              height: 300,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(children: [
-                      const Icon(Icons.error_outline_outlined),
-                      const SizedBox(width: 5),
-                      Text(
-                        "Make_sure_your_id_card_is_clear_and_without_a_scratch".tr,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ]),
-                  ]),
-                ),
-              ),
-              isLoading ? pageLoading() : const SizedBox(),
-            ]),
-          ),
-          bottomNavigationBar: selectBottomView(selectedStep),
+  Widget _buildTextStep(int step, int state, String number, String name, double padd) {
+    return Expanded(
+      child: Column(children: [
+        Text(
+          number,
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: step == state || state == 2 ? Colors.white : Colors.transparent),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          name,
+          softWrap: false,
+          style: TextStyle(fontSize: 12, color: step == state ? const Color(0xFF106BAB) : const Color(0xFF191919)),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildDoneStep() {
+    return Expanded(
+      child: Container(
+        width: 22,
+        height: 22,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
+            Color.fromRGBO(2, 65, 109, 1),
+            Color.fromRGBO(16, 107, 171, 1),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedStep() {
+    return Expanded(
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
+            Color.fromRGBO(2, 65, 109, 1),
+            Color.fromRGBO(16, 107, 171, 1),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUnselectedStep() {
+    return Expanded(
+      child: Container(
+        width: 22,
+        height: 22,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color.fromRGBO(2, 65, 109, 1)),
+          color: Colors.white,
         ),
       ),
     );
@@ -1263,12 +633,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
           decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.grey[300]!))),
           child: Row(children: [
-            Expanded(
-              child: ButtonCancel(
-                text: 'back'.tr,
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
+            Expanded(child: ButtonCancel(text: 'back'.tr, onPressed: () => Navigator.of(context, rootNavigator: true).pop())),
             const SizedBox(width: 20),
             Expanded(
               child: ButtonConfirm(
@@ -1303,12 +668,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                 ),
               ),
               const SizedBox(width: 20),
-              Expanded(
-                child: ButtonConfirm(
-                  text: 'continue'.tr,
-                  onPressed: autoSubmitOTP,
-                ),
-              ),
+              Expanded(child: ButtonConfirm(text: 'continue'.tr, onPressed: autoSubmitOTP)),
             ],
           ),
         );
@@ -1397,10 +757,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                           gradient: const LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0xFF115899),
-                              Color(0xFF02416D),
-                            ],
+                            colors: [Color(0xFF115899), Color(0xFF02416D)],
                           ),
                         ),
                         child: MaterialButton(
@@ -1410,7 +767,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                             getLivenessFacetec();
 
                             _timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
-                              if (isSuccess!) {
+                              if (isSuccess) {
                                 _timer?.cancel();
                               } else {
                                 getResultFacetec();
@@ -1422,10 +779,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                             children: [
                               const Icon(Icons.photo_camera_outlined, color: Colors.white),
                               const SizedBox(width: 10),
-                              Text(
-                                'camera'.tr,
-                                style: const TextStyle(fontSize: 17, color: Colors.white),
-                              )
+                              Text('camera'.tr, style: const TextStyle(fontSize: 17, color: Colors.white))
                             ],
                           ),
                         ),
@@ -1441,24 +795,22 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                               borderRadius: BorderRadius.circular(25),
                               side: const BorderSide(color: Color(0xFF115899)),
                             ),
-                            child: Text(
-                              'Re-take_photo'.tr,
-                              style: const TextStyle(color: Color(0xFF115899)),
-                            ),
+                            child: Text('Re-take_photo'.tr, style: const TextStyle(color: Color(0xFF115899))),
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      CameraScanIDCard(titleAppbar: 'Selfie_ID_Card'.tr, enableButton: true, isFront: true, noFrame: true),
+                                  builder: (context) => CameraScanIDCard(
+                                    titleAppbar: 'Selfie_ID_Card'.tr,
+                                    enableButton: true,
+                                    isFront: true,
+                                    noFrame: true,
+                                  ),
                                 ),
                               ).then(
                                 (v) async {
                                   if (v != null) {
                                     int fileSize = await getFileSize(filepath: v);
-                                    // if (pathSelfie.isNotEmpty) {
-                                    //   await File(pathSelfie).delete();
-                                    // }
                                     if (!isImage(v)) {
                                       showDialog(
                                         barrierDismissible: true,
@@ -1552,10 +904,6 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                 );
                                 fileNameSelfieID = resSelfieID['response']['data']['file_name'];
 
-                                // await imgFrontIDCard!.delete();
-                                // await imgBackIDCard!.delete();
-                                // await File(pathSelfie).delete();
-
                                 resCreateUser = await PostAPI.call(
                                   url: '$register3003/users',
                                   headers: Authorization.auth2,
@@ -1576,7 +924,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                     "work_name": workNameController.text,
                                     "work_address": '${workAddressController.text} ${workAddressSerchController.text}',
                                     "file_front_citizen": fileNameFrontID!,
-                                    "file_back_citizen": fileNameBackID,
+                                    "file_back_citizen": fileNameBackID!,
                                     "file_selfie": fileNameSelfieID,
                                     "file_liveness": '',
                                     "imei": StateStore.deviceSerial.value,
@@ -1586,42 +934,25 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
                                 setState(() => isLoading = false);
                                 if (resCreateUser['success']) {
-                                  _userLoginID = resCreateUser['response']['data']['user_login_id'];
-                                  var data = await PostAPI.call(
-                                    url: '$register3003/user_logins/$_userLoginID/login',
-                                    headers: Authorization.none,
-                                    body: {"imei": StateStore.deviceSerial.value, "pin": pinController.text},
+                                  await imgFrontIDCard!.delete();
+                                  await imgBackIDCard!.delete();
+                                  await File(pathSelfie).delete();
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) => CustomDialog(
+                                      title: 'save_success'.tr,
+                                      content: 'congratulations_now'.tr,
+                                      textConfirm: "Close".tr,
+                                      onPressedConfirm: () {
+                                        Navigator.pop(context);
+                                        Navigator.of(context, rootNavigator: true).pop({
+                                          "success": true,
+                                          "message": "รูปถ่ายบัตรประชาชนไม่ผ่าน Dopa, ส่งภาพถ่ายรูปคู่บัตรประชาชน รอตรวจสอบ",
+                                        });
+                                      },
+                                    ),
                                   );
-
-                                  if (data['success']) {
-                                    await LocalStorage.setAutoPIN(false);
-                                    await LocalStorage.setUserLoginID(_userLoginID!);
-                                    await LocalStorage.setIsCorporate(false);
-                                    await LocalStorage.setTimeToken(DateTime.now().toString());
-
-                                    StateStore.role.value = data['response']['data']['role_code'];
-                                    StateStore.pin.value = pinController.text;
-                                    StateStore.token.value = data['response']['data']['token'];
-                                    StateStore.approve.value = data['response']['data']['is_ocr_approve'];
-                                    StateStore.isCorporate.value = false;
-
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) => CustomDialog(
-                                        title: 'save_success'.tr,
-                                        content: 'congratulations_now'.tr,
-                                        textConfirm: "Close".tr,
-                                        onPressedConfirm: () {
-                                          Navigator.pop(context);
-                                          Navigator.of(context, rootNavigator: true).pop({
-                                            "success": true,
-                                            "message": "รูปถ่ายบัตรประชาชนไม่ผ่าน Dopa, ส่งถ่ายรูปคู่บัตรประชาชน รอตรวจสอบ",
-                                          });
-                                        },
-                                      ),
-                                    );
-                                  }
                                 } else {
                                   showDialog(
                                     barrierDismissible: false,
@@ -1655,100 +986,351 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
       default:
     }
   }
-}
 
-Widget _buildSuggestion(String topic) {
-  return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-    const Icon(Icons.check_circle_outline_rounded, color: Color(0xFF02416D), size: 24),
-    Text(topic, style: const TextStyle(color: Colors.black54, fontSize: 16)),
-  ]);
-}
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        onBackButton(selectedStep);
+        return true;
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: BackButton(onPressed: () => onBackButton(selectedStep)),
+            title: Text('register'.tr),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(80),
+              child: Container(
+                height: 80,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(children: [
+                  Stack(children: [
+                    Center(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width - 80,
+                        child: const Divider(color: Color(0xFF02416D), thickness: 1.5, height: 30, indent: 25, endIndent: 25),
+                      ),
+                    ),
+                    Row(children: [
+                      //1
+                      selectedStep == 0 ? _buildSelectedStep() : _buildDoneStep(),
+                      //2
+                      selectedStep == 1
+                          ? _buildSelectedStep()
+                          : selectedStep == 2 || selectedStep == 3 || selectedStep == 4 || selectedStep == 5
+                              ? _buildDoneStep()
+                              : _buildUnselectedStep(),
+                      //3
+                      selectedStep == 2 || selectedStep == 5
+                          ? _buildSelectedStep()
+                          : selectedStep == 3 || selectedStep == 4
+                              ? _buildDoneStep()
+                              : _buildUnselectedStep(),
+                      //4
+                      selectedStep == 4 ? _buildSelectedStep() : _buildUnselectedStep()
+                    ]),
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      //1
+                      selectedStep == 1
+                          ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
+                          : selectedStep == 2 || selectedStep == 5
+                              ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
+                              : selectedStep == 3
+                                  ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
+                                  : selectedStep == 4
+                                      ? _buildIconCheckStep(selectedStep, 0, 'phone_number'.tr.replaceAll(' number', ''))
+                                      : _buildTextStep(selectedStep, 0, '1', 'phone_number'.tr.replaceAll(' number', ''), 0),
+                      //2
+                      selectedStep == 2 || selectedStep == 5
+                          ? _buildIconCheckStep(selectedStep, 1, 'OTP')
+                          : selectedStep == 3
+                              ? _buildIconCheckStep(selectedStep, 1, 'OTP')
+                              : selectedStep == 4
+                                  ? _buildIconCheckStep(selectedStep, 1, 'OTP')
+                                  : selectedStep == 1
+                                      ? _buildTextStep(selectedStep, 1, '2', 'OTP', 0)
+                                      : _buildTextStep(selectedStep, 1, '', 'OTP', 0),
+                      //3
+                      selectedStep == 3 || selectedStep == 4
+                          ? _buildIconCheckStep(selectedStep, 2, 'data'.tr)
+                          : selectedStep == 2 || selectedStep == 5
+                              ? _buildTextStep(selectedStep, 2, '3', 'data'.tr, 0)
+                              : _buildTextStep(selectedStep, 2, '', 'data'.tr, 0),
+                      //4
+                      selectedStep == 4 ? _buildTextStep(selectedStep, 4, '4', 'KYC', 0) : _buildTextStep(selectedStep, 4, '', 'KYC', 0)
+                    ])
+                  ]),
+                ]),
+              ),
+            ),
+          ),
+          body: SafeArea(
+            top: false,
+            child: Stack(children: [
+              Visibility(
+                visible: _phoneVisible,
+                maintainState: true,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  child: Form(
+                    key: _formKeyPhoneNumber,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('register'.tr, style: const TextStyle(fontSize: 24)),
+                        Text('enter_to_otp'.tr, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                        const SizedBox(height: 10),
+                        Column(children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: TextFormField(
+                              controller: phonenumberController,
+                              maxLength: 12,
+                              validator: (v) {
+                                if (v!.isEmpty) {
+                                  return 'please_enter'.tr;
+                                } else if (v.length != 12 && validatePhonenumber) {
+                                  return 'pls_10digits'.tr;
+                                }
+                                return null;
+                              },
+                              onChanged: (v) async {
+                                _formKeyPhoneNumber.currentState!.validate();
+                                if (v.length == 12) {
+                                  FocusScope.of(context).unfocus();
+                                  await autoSubmitPhoneNumber();
+                                }
+                              },
+                              decoration: InputDecoration(labelText: 'phone_num'.tr),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[MaskTextFormatter.phoneNumber],
+                            ),
+                          )
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: _otpVisible,
+                maintainState: true,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'confirm_phone_num'.tr,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      Text(
+                        '${'enter_pin_sent_phone'.tr} ${phonenumberController.text}',
+                        style: const TextStyle(color: Colors.black54, fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      Form(
+                        key: formkeyOTP,
+                        child: PinCodeTextField(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          appContext: context,
+                          pastedTextStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          length: 6,
+                          obscureText: false,
+                          obscuringCharacter: '*',
+                          animationType: AnimationType.fade,
+                          pinTheme: PinTheme(
+                            shape: PinCodeFieldShape.box,
+                            borderRadius: BorderRadius.circular(5),
+                            fieldHeight: 50,
+                            fieldWidth: 43,
+                            activeColor: hasError ? Colors.red : Colors.white,
+                            selectedColor: const Color.fromRGBO(2, 65, 109, 1),
+                            inactiveColor: const Color.fromRGBO(2, 65, 109, 1),
+                            disabledColor: Colors.grey,
+                            activeFillColor: Colors.white,
+                            selectedFillColor: const Color.fromRGBO(2, 65, 109, 1),
+                            inactiveFillColor: Colors.white,
+                          ),
+                          cursorColor: Colors.white,
+                          animationDuration: const Duration(milliseconds: 300),
+                          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          backgroundColor: Colors.white,
+                          enableActiveFill: true,
+                          errorAnimationController: errorController,
+                          controller: otpController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          boxShadows: const [BoxShadow(offset: Offset(0, 1), color: Colors.black12, blurRadius: 10)],
+                          onChanged: (v) {
+                            setState(() => hasError = false);
+                            if (v.length == 6) autoSubmitOTP();
+                          },
+                          beforeTextPaste: (text) => true,
+                        ),
+                      ),
+                      timeOTP(
+                        expiration: expiration,
+                        datetimeOTP: datetimeOTP,
+                        onPressed: () async {
+                          var otpId = await PostAPI.call(
+                            url: '$register3003/send_otps',
+                            headers: Authorization.auth2,
+                            body: {"phone_number": txPhoneNumber, "country_code": countryCode},
+                          );
 
-Widget _buildIconCheckStep(int step, int state, String name) {
-  return Expanded(
-    child: Column(children: [
-      const SizedBox(
-        height: 30,
-        width: 50,
-        child: Icon(Icons.check, color: Colors.white, size: 16),
-      ),
-      const SizedBox(height: 10),
-      Text(
-        name,
-        softWrap: false,
-        style: TextStyle(fontSize: 12, color: step == state ? const Color(0xFF106BAB) : const Color(0xFF191919)),
-      ),
-    ]),
-  );
-}
+                          if (otpId['success']) {
+                            setState(() {
+                              sendOtpId = otpId['response']['data']['send_otp_id'];
+                              datetimeOTP = DateTime.parse(otpId['response']['data']['expiration_at']);
 
-Widget _buildTextStep(
-  int step,
-  int state,
-  String number,
-  String name,
-  double padd,
-) {
-  return Expanded(
-    child: Column(children: [
-      Text(
-        number,
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: step == state || state == 2 ? Colors.white : Colors.transparent),
+                              otpController.clear();
+                              expiration = false;
+                            });
+                          }
+                        },
+                        onDone: () => setState(() => expiration = true),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: _scanIDVisible,
+                maintainState: true,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('idcard'.tr, style: const TextStyle(fontSize: 24)),
+                      Text('idcard_security'.tr, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                      const SizedBox(height: 10),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text('suggestion'.tr, style: const TextStyle(fontSize: 20)),
+                          _buildSuggestion('photolight'.tr),
+                          _buildSuggestion('photoandIDcard_info'.tr),
+                          _buildSuggestion('photoandIDcard_glare'.tr),
+                          _buildSuggestion('idcard_official'.tr),
+                        ]),
+                      ),
+                      const SizedBox(height: 10),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('idcard_policy'.tr, style: const TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: _dataVisible,
+                child: PersonalInfo(
+                  ocrAllFailed: ocrFailedAll,
+                  person: personalInfo,
+                  setDataVisible: setDataVisible,
+                  setPinVisible: setPinVisible,
+                  setSelectedStep: setSelectedStep,
+                  setFirstName: setFirstName,
+                  setLastName: setLastName,
+                  setAddress: setAddress,
+                  setAddressSearch: setAddressSearch,
+                  setBirthday: setBirthday,
+                  setIDCard: setIDCard,
+                  setLaserCode: setLaserCode,
+                  setCareerID: setCareerID,
+                  setWorkName: setWorkName,
+                  setWorkAddress: setWorkAddress,
+                  setWorkAddressSearch: setWorkAddressSearch,
+                  setindexDistric: setindexDistric,
+                  setindexSubDistric: setindexSubDistric,
+                  setindexProvince: setindexProvince,
+                  setFileFrontCitizen: setFileFrontCitizen,
+                  setFileBackCitizen: setFileBackCitizen,
+                  setFileSelfie: setFileSelfie,
+                ),
+              ),
+              Visibility(
+                visible: _kycVisible,
+                maintainState: true,
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Column(children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('scanface'.tr, style: const TextStyle(fontSize: 24)),
+                        Text('scanface_verify'.tr, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                        const SizedBox(height: 20),
+                        Row(children: [
+                          const Icon(Icons.check_circle_outline, color: Color(0xFF27AE60)),
+                          const SizedBox(width: 5),
+                          Text('photolight'.tr, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                        ]),
+                        Row(children: [
+                          const Icon(Icons.check_circle_outline, color: Color(0xFF27AE60)),
+                          const SizedBox(width: 5),
+                          Text('faceposition'.tr, style: const TextStyle(color: Colors.black54, fontSize: 16)),
+                        ]),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(children: [
+                          Image.asset('assets/images/FaceScan-1.jpg', package: 'gbkyc', scale: 5),
+                          Text('Keep_your_face_straight'.tr, textAlign: TextAlign.center)
+                        ]),
+                        const SizedBox(width: 20),
+                        Column(children: [
+                          Image.asset('assets/images/FaceScan-2.jpg', package: 'gbkyc', scale: 5),
+                          Text('Shoot_in_a_well_lit_area'.tr, textAlign: TextAlign.center)
+                        ])
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+              Visibility(
+                visible: _kycVisibleFalse,
+                maintainState: true,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: ListView(physics: const ClampingScrollPhysics(), padding: const EdgeInsets.all(20), children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: pathSelfie == ''
+                          ? Image.asset('assets/icons/idCardD.png', package: 'gbkyc', height: 300)
+                          : Image.file(File(pathSelfie), height: 300, fit: BoxFit.cover),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(children: [
+                      const Icon(Icons.error_outline_outlined),
+                      const SizedBox(width: 5),
+                      Text(
+                        "Make_sure_your_id_card_is_clear_and_without_a_scratch".tr,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ]),
+                  ]),
+                ),
+              ),
+              if (isLoading) pageLoading(),
+            ]),
+          ),
+          bottomNavigationBar: selectBottomView(selectedStep),
+        ),
       ),
-      const SizedBox(height: 10),
-      Text(
-        name,
-        softWrap: false,
-        style: TextStyle(fontSize: 12, color: step == state ? const Color(0xFF106BAB) : const Color(0xFF191919)),
-      ),
-    ]),
-  );
-}
-
-Widget _buildDoneStep() {
-  return Expanded(
-    child: Container(
-      width: 22,
-      height: 22,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-          Color.fromRGBO(2, 65, 109, 1),
-          Color.fromRGBO(16, 107, 171, 1),
-        ]),
-      ),
-    ),
-  );
-}
-
-Widget _buildSelectedStep() {
-  return Expanded(
-    child: Container(
-      width: 32,
-      height: 32,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-          Color.fromRGBO(2, 65, 109, 1),
-          Color.fromRGBO(16, 107, 171, 1),
-        ]),
-      ),
-    ),
-  );
-}
-
-Widget _buildUnselectedStep() {
-  return Expanded(
-    child: Container(
-      width: 22,
-      height: 22,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(width: 1, color: const Color.fromRGBO(2, 65, 109, 1)),
-        color: Colors.white,
-      ),
-    ),
-  );
+    );
+  }
 }
