@@ -49,6 +49,20 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
+    version: "0.9.8"
+  camera_android:
+    dependency: transitive
+    description:
+      name: camera_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.7+1"
+  camera_avfoundation:
+    dependency: transitive
+    description:
+      name: camera_avfoundation
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.9.7+1"
   camera_platform_interface:
     dependency: transitive
@@ -182,7 +196,7 @@ packages:
       name: dropdown_button2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.3"
+    version: "1.6.1"
   encrypt:
     dependency: transitive
     description:
@@ -296,20 +310,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.6.5"
-  google_mlkit_commons:
-    dependency: transitive
-    description:
-      name: google_mlkit_commons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
-  google_mlkit_text_recognition:
-    dependency: transitive
-    description:
-      name: google_mlkit_text_recognition
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   http:
     dependency: transitive
     description:
@@ -624,7 +624,7 @@ packages:
       name: responsive_framework
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.9"
+    version: "0.2.0"
   sky_engine:
     dependency: transitive
     description: flutter

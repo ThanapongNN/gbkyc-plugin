@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:gbkyc/api/config_api.dart';
+import 'package:gbkyc/api/post_api.dart';
+import 'package:gbkyc/utils/crop_image_path.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+// import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'widgets/circular_progress.dart';
-import 'api/config_api.dart';
 import 'widgets/custom_dialog.dart';
-import 'api/post_api.dart';
 
 class CameraScanIDCard extends StatefulWidget {
   final bool? enableButton, isFront, noFrame, scanID;
@@ -42,19 +42,18 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
   bool? noFrame = false;
   bool flashStatus = false;
   bool hideFlash = false;
-  bool _takeFront = false;
-  bool _takeBack = false;
+  // bool _takeFront = false;
+  // bool _takeBack = false;
   bool isInputScan = false;
   int cameraCount = 0, cameraBackCount = 0;
 
   CameraController? _controller;
   CameraLensDirection _direction = CameraLensDirection.back;
   final GlobalKey _globalKey = GlobalKey();
-  final TextRecognizer textDetector = TextRecognizer();
+  // final TextRecognizer textDetector = TextRecognizer();
 
   late Size size;
   late Offset offset;
-  late Uint8List test = Uint8List(0);
 
   String? frontIDPath;
   String? backIDPath;
@@ -127,7 +126,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
   @override
   void dispose() {
     super.dispose();
-    textDetector.close();
+    // textDetector.close();
     _controller?.dispose();
   }
 
@@ -147,17 +146,17 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
         if (!mounted) {
           return;
         }
-        if (widget.scanID!) {
-          isInputScan = true;
-          _controller?.startImageStream(_processCameraImage);
-        }
+        // if (widget.scanID!) {
+        //   isInputScan = true;
+        //   _controller?.startImageStream(_processCameraImage);
+        // }
         _controller!.setFlashMode(FlashMode.off);
 
         setState(() {});
       });
     } else {
       if (await Permission.camera.isPermanentlyDenied) {
-        Get.back();
+        Navigator.pop(context);
         showDialog(
           context: context,
           builder: (context) => CustomDialog(
@@ -165,7 +164,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
             content: 'access_your_camera_Want_to_go_to_settings'.tr,
             avatar: false,
             onPressedConfirm: () {
-              Get.back();
+              Navigator.pop(context);
               openAppSettings();
             },
             buttonCancel: true,
@@ -191,100 +190,105 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
   //   await _startLiveFeed();
   // }
 
-  Future<void> processImage(InputImage inputImage) async {
-    if (isBusy) return;
-    isBusy = true;
-    final recognisedText = await textDetector.processImage(inputImage);
-    debugPrint(recognisedText.text);
-    if (RegExp(r'Thai National|dentification Number').hasMatch(recognisedText.text) &&
-        RegExp(r'of lssue|of Expiry').hasMatch(recognisedText.text) &&
-        !_takeFront &&
-        visibleFront!) {
-      _takeFront = true;
-      Future.delayed(const Duration(seconds: 1), () {
-        _onCaptureFrontPressed();
-      });
-    }
-    if (RegExp(r'BORA-').hasMatch(recognisedText.text) && !_takeBack && visibleBack) {
-      _takeBack = true;
-      Future.delayed(const Duration(seconds: 1), () {
-        _onCaptureBackPressed();
-      });
-    }
+  // Future<void> processImage(InputImage inputImage) async {
+  //   if (isBusy) return;
+  //   isBusy = true;
+  //   final recognisedText = await textDetector.processImage(inputImage);
+  //   debugPrint(recognisedText.text);
+  //   if (RegExp(r'Thai National|dentification Number').hasMatch(recognisedText.text) &&
+  //       RegExp(r'of lssue|of Expiry').hasMatch(recognisedText.text) &&
+  //       !_takeFront &&
+  //       visibleFront!) {
+  //     _takeFront = true;
+  //     Future.delayed(const Duration(seconds: 1), () {
+  //       _onCaptureFrontPressed();
+  //     });
+  //   }
+  //   if (RegExp(r'BORA-').hasMatch(recognisedText.text) && !_takeBack && visibleBack) {
+  //     _takeBack = true;
+  //     Future.delayed(const Duration(seconds: 1), () {
+  //       _onCaptureBackPressed();
+  //     });
+  //   }
 
-    if (inputImage.inputImageData?.size != null && inputImage.inputImageData?.imageRotation != null) {}
-    isBusy = false;
-    isInputScan = true;
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  //   if (inputImage.inputImageData?.size != null && inputImage.inputImageData?.imageRotation != null) {}
+  //   isBusy = false;
+  //   isInputScan = true;
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
-  Future _processCameraImage(CameraImage image) async {
-    if (isInputScan) {
-      isInputScan = false;
-      Future.delayed(const Duration(milliseconds: 500), () async {
-        // double leftFinal = offset.dx * image.width / Get.width;
-        // double topFinal = offset.dy * image.height / Get.height;
-        // double widthFinal = size.width * image.width / Get.width;
-        // double heightFinal = size.height * image.height / Get.height;
+  // Future _processCameraImage(CameraImage image) async {
+  //   if (isInputScan) {
+  //     isInputScan = false;
+  //     Future.delayed(const Duration(milliseconds: 500), () async {
+  //       // double leftFinal = offset.dx * image.width / Get.width;
+  //       // double topFinal = offset.dy * image.height / Get.height;
+  //       // double widthFinal = size.width * image.width / Get.width;
+  //       // double heightFinal = size.height * image.height / Get.height;
 
-        // Uint8List bytes = await convertImageToPng(image, leftFinal, topFinal, widthFinal, heightFinal);
-        // if (mounted) setState(() => test = bytes);
+  //       // Uint8List bytes = await convertImageToPng(image, leftFinal, topFinal, widthFinal, heightFinal);
+  //       // if (mounted) setState(() => test = bytes);
 
-        // final tempDir = await getTemporaryDirectory();
-        // File file = await File('${tempDir.path}/image.png').create();
-        // file.writeAsBytesSync(bytes);
+  //       // final tempDir = await getTemporaryDirectory();
+  //       // File file = await File('${tempDir.path}/image.png').create();
+  //       // file.writeAsBytesSync(bytes);
 
-        // processImage(InputImage.fromFile(file));
+  //       // processImage(InputImage.fromFile(file));
 
-        final WriteBuffer allBytes = WriteBuffer();
-        for (Plane plane in image.planes) {
-          allBytes.putUint8List(plane.bytes);
-        }
-        final bytes = allBytes.done().buffer.asUint8List();
+  //       final WriteBuffer allBytes = WriteBuffer();
+  //       for (Plane plane in image.planes) {
+  //         allBytes.putUint8List(plane.bytes);
+  //       }
+  //       final bytes = allBytes.done().buffer.asUint8List();
 
-        final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
+  //       final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
 
-        // final camera = await availableCameras().then(
-        //   (List<CameraDescription> cameras) => cameras.firstWhere(
-        //     (CameraDescription camera) => camera.lensDirection == _direction,
-        //   ),
-        // );
-        const imageRotation = InputImageRotation.rotation0deg;
+  //       // final camera = await availableCameras().then(
+  //       //   (List<CameraDescription> cameras) => cameras.firstWhere(
+  //       //     (CameraDescription camera) => camera.lensDirection == _direction,
+  //       //   ),
+  //       // );
+  //       const imageRotation = InputImageRotation.rotation0deg;
 
-        const inputImageFormat = InputImageFormat.nv21;
+  //       const inputImageFormat = InputImageFormat.nv21;
 
-        final planeData = image.planes.map(
-          (Plane plane) {
-            return InputImagePlaneMetadata(
-              bytesPerRow: plane.bytesPerRow,
-              height: plane.height,
-              width: plane.width,
-            );
-          },
-        ).toList();
+  //       final planeData = image.planes.map(
+  //         (Plane plane) {
+  //           return InputImagePlaneMetadata(
+  //             bytesPerRow: plane.bytesPerRow,
+  //             height: plane.height,
+  //             width: plane.width,
+  //           );
+  //         },
+  //       ).toList();
 
-        final inputImageData = InputImageData(
-          size: imageSize,
-          imageRotation: imageRotation,
-          inputImageFormat: inputImageFormat,
-          planeData: planeData,
-        );
+  //       final inputImageData = InputImageData(
+  //         size: imageSize,
+  //         imageRotation: imageRotation,
+  //         inputImageFormat: inputImageFormat,
+  //         planeData: planeData,
+  //       );
 
-        final inputImage = InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
+  //       final inputImage = InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
 
-        processImage(inputImage);
-      });
-    }
-  }
+  //       processImage(inputImage);
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(elevation: 0, title: Text(widget.titleAppbar)),
       body: Stack(children: [
         visibleFront! ? _cameraFrontPreviewWidget() : _cameraBackPreviewWidget(),
+        Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              height: kToolbarHeight + 40,
+              child: AppBar(elevation: 0, title: Text(widget.titleAppbar)),
+            )),
         Align(
           alignment: Alignment.bottomCenter,
           child: widget.enableButton!
@@ -324,50 +328,40 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
                   ]),
                 ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
-          child: Center(
-            child: Container(
-              key: _globalKey,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              height: Get.height / 2.2,
-              width: double.infinity,
-            ),
-          ),
-        ),
-        // if (test.isNotEmpty) Image.memory(test)
+        Center(child: SizedBox(key: _globalKey, height: Get.height / 2.5, width: double.infinity)),
+        if (frontIDPath != null) Image.file(File(frontIDPath!))
       ]),
     );
   }
 
   Widget ocrGuideFrame(bool isFront) {
-    if (_controller!.value.isInitialized == false) {
+    if (!_controller!.value.isInitialized) {
       return Container();
     }
     return Stack(children: [
-      SizedBox(
-        width: double.infinity,
-        child: CameraPreview(
-          _controller!,
-          child: !noFrame!
-              ? SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Opacity(
-                    opacity: 0.8,
-                    child: Image.asset(
-                      isFront ? 'assets/images/crop_front_id_${'language'.tr}.png' : 'assets/images/crop_back_id_${'language'.tr}.png',
-                      package: 'gbkyc',
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                )
-              : const SizedBox(),
+      Center(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+          child: CameraPreview(_controller!),
         ),
       ),
       if (!noFrame!)
+        SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Opacity(
+            opacity: 0.8,
+            child: Image.asset(
+              isFront ? 'assets/images/crop_front_id_${'language'.tr}.png' : 'assets/images/crop_back_id_${'language'.tr}.png',
+              package: 'gbkyc',
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+        ),
+      if (!noFrame!)
         Positioned(
-          top: 50,
+          top: Get.height / 5,
           left: 0,
           right: 0,
           child: Text(
@@ -474,44 +468,52 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
   }
 
   _onCaptureFrontPressed() async {
-    if (_controller!.value.isStreamingImages) {
-      await _controller?.stopImageStream();
-    }
+    // if (_controller!.value.isStreamingImages) {
+    //   await _controller?.stopImageStream();
+    // }
     try {
       setState(() => isLoading = true);
       await _controller!.takePicture().then((v) => frontIDPath = v.path);
-      List<int> imageBytes = File(frontIDPath!).readAsBytesSync();
 
-      String imgB64 = base64Encode(imageBytes);
-      final resFront = await ocrThaiID(image: imgB64, side: "front");
+      List<int> toJPG = await cropImagePath(imagePath: frontIDPath!, offset: offset, size: size);
+      String base64 = base64Encode(toJPG);
+
+      final resFront = await ocrThaiID(image: base64, side: "front");
       if (resFront.isNotEmpty) {
-        List arrName = resFront['name_th']!.split(' ');
-        dopaFirstName = arrName[arrName.length - 2];
-        dopaLastName = arrName[arrName.length - 1];
-        setState(() {
-          String fullAddress = resFront['address_th'];
-          List arrBirthday = resFront['date_of_birth_en']!.split(' ');
-          List address = fullAddress.split(RegExp(r" ต.| แขวง"));
+        String fullAddress = resFront['address_th'];
+        List address = fullAddress.split(RegExp(r" ต.| แขวง"));
+        List arrName = [], arrBirthday = [];
 
+        if (resFront['name_th'].toString().contains(' ')) arrName = resFront['name_th'].split(' ');
+        if (resFront['date_of_birth_en'].toString().contains(' ')) arrBirthday = resFront['date_of_birth_en'].split(' ');
+
+        if (arrName.isNotEmpty) {
           if (Get.locale.toString() == 'th_TH') {
             ocrFrontName = arrName[arrName.length - 2];
             ocrFrontSurname = arrName[arrName.length - 1];
           } else {
-            List arrEnName = resFront['first_name_en']!.split(' ');
+            List arrEnName = resFront['first_name_en'].split(' ');
             ocrFrontName = arrEnName[arrEnName.length - 1];
             ocrFrontSurname = resFront['last_name_en'];
           }
-          ocrFrontID = resFront['id_number']!.replaceAll(RegExp(r"\s+\b|\b\s"), "");
-          ocrFrontAddress = address[0];
-          ocrFilterAddress = address[1];
-          ocrFrontBirthdayD = arrBirthday[0];
-          ocrFrontBirthdayM = arrBirthday[1];
-          ocrFrontBirthdayY = arrBirthday[2];
 
+          dopaFirstName = arrName[arrName.length - 2];
+          dopaLastName = arrName[arrName.length - 1];
+        }
+
+        ocrFrontID = resFront['id_number'].replaceAll(RegExp(r"\s+\b|\b\s"), "");
+        ocrFrontAddress = address[0];
+        ocrFilterAddress = address[1];
+        ocrFrontBirthdayD = arrBirthday[0];
+        ocrFrontBirthdayM = arrBirthday[1];
+        ocrFrontBirthdayY = arrBirthday[2];
+
+        setState(() {
           isLoading = false;
           visibleFront = false;
           visibleBack = true;
         });
+
         await _startLiveFeed();
       } else {
         showDialog(
@@ -522,16 +524,12 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
             content: 'ID_card_scan_failed_Please_try_again'.tr,
             avatar: false,
             onPressedConfirm: () async {
-              Get.back();
-
-              // if (File(frontIDPath) != null) {
-              //   await File(frontIDPath).delete();
-              // }
+              Navigator.pop(context);
 
               setState(() {
                 cameraCount++;
                 isLoading = false;
-                _takeFront = false;
+                // _takeFront = false;
               });
 
               if (cameraCount == 3) {
@@ -550,17 +548,17 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
   }
 
   _onCaptureBackPressed() async {
-    if (_controller!.value.isStreamingImages) {
-      await _controller?.stopImageStream();
-    }
+    // if (_controller!.value.isStreamingImages) {
+    //   await _controller?.stopImageStream();
+    // }
     try {
       setState(() => isLoading = true);
       await _controller!.takePicture().then((v) => backIDPath = v.path);
 
-      List<int> imageBytes = File(backIDPath!).readAsBytesSync();
-      String imgB64 = base64Encode(imageBytes);
+      List<int> toJPG = await cropImagePath(imagePath: backIDPath!, offset: offset, size: size);
+      String base64 = base64Encode(toJPG);
 
-      final resBack = await ocrThaiID(image: imgB64, side: 'back');
+      final resBack = await ocrThaiID(image: base64, side: 'back');
 
       if (resBack.isNotEmpty) {
         ocrBackLaser = resBack['laser_number'].replaceAll(RegExp("-"), "");
@@ -629,7 +627,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
           setState(() {
             cameraBackCount++;
             isLoading = false;
-            _takeBack = false;
+            // _takeBack = false;
           });
 
           if (cameraBackCount == 3) {
@@ -649,7 +647,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
             content: 'ID_card_scan_failed_Please_try_again'.tr,
             avatar: false,
             onPressedConfirm: () async {
-              Get.back();
+              Navigator.pop(context);
 
               // if (File(backIDPath) != null) {
               //   await File(backIDPath).delete();
@@ -658,7 +656,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
               setState(() {
                 cameraBackCount++;
                 isLoading = false;
-                _takeBack = false;
+                // _takeBack = false;
               });
 
               if (cameraBackCount == 3) {

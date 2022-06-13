@@ -11,11 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  camera: ^0.9.3
+  camera: ^0.9.8
   device_info_plus: ^3.2.1
   dio: ^4.0.0
   dotted_border: ^2.0.0
-  dropdown_button2: ^1.5.2
+  dropdown_button2: ^1.6.1
   encrypt: ^5.0.1
   equatable: ^2.0.3
   flutter_bloc: ^7.3.3
@@ -23,7 +23,7 @@ dependencies:
   flutter_easyloading: ^3.0.3
   flutter_iconly:
   get: ^4.6.1
-  google_mlkit_text_recognition: ^0.3.0
+  # google_mlkit_text_recognition: ^0.3.0
   http: ^0.13.4
   image: ^3.1.1
   image_cropper: ^2.0.2
@@ -35,7 +35,7 @@ dependencies:
   path_provider: ^2.0.2
   permission_handler: ^9.2.0
   pin_code_fields: ^7.4.0
-  responsive_framework: ^0.1.8
+  responsive_framework: ^0.2.0
 
 dev_dependencies:
   flutter_test:

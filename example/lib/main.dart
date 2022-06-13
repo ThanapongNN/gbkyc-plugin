@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
           minWidth: double.infinity,
           color: Colors.blue,
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Gbkyc().show())).then((v) => debugPrint('ค่าที่ได้กลับจาก SDK $v'));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Gbkyc.show())).then((v) => debugPrint('ค่าที่ได้กลับจาก SDK $v'));
           },
           child: const Text(
             'Open GB SDK',

@@ -354,7 +354,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
         Container(
           height: 60,
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
           margin: const EdgeInsets.only(top: 20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
@@ -364,6 +363,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton2(
+              buttonPadding: const EdgeInsets.symmetric(horizontal: 12),
               dropdownMaxHeight: 400,
               dropdownWidth: 400,
               dropdownElevation: 8,
@@ -430,7 +430,6 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 Container(
                   height: 60,
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   margin: const EdgeInsets.only(top: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -440,6 +439,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2(
+                      buttonPadding: const EdgeInsets.symmetric(horizontal: 12),
                       dropdownMaxHeight: 400,
                       dropdownWidth: 400,
                       dropdownElevation: 8,

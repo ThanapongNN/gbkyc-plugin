@@ -1010,7 +1010,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                   Stack(children: [
                     Center(
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 80,
+                        width: MediaQuery.of(context).size.width - Get.width / 5,
                         child: const Divider(color: Color(0xFF02416D), thickness: 1.5, height: 30, indent: 25, endIndent: 25),
                       ),
                     ),

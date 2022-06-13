@@ -7,7 +7,7 @@ class Gbkyc {
     return GbkycPlatform.instance.getPlatformVersion();
   }
 
-  Widget show() {
+  static Widget show() {
     return const MyApp();
   }
 }
