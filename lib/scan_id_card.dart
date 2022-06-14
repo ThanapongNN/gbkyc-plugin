@@ -329,7 +329,7 @@ class _CameraScanIDCardState extends State<CameraScanIDCard> {
                 ),
         ),
         Center(child: SizedBox(key: _globalKey, height: Get.height / 2.5, width: double.infinity)),
-        if (frontIDPath != null) Image.file(File(frontIDPath!))
+        // if (frontIDPath != null) Image.file(File(frontIDPath!))
       ]),
     );
   }
