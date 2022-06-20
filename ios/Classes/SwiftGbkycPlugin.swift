@@ -9,6 +9,26 @@ public class SwiftGbkycPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    if (call.method == "getLivenessFacetec") {
+      // guard let args = call.arguments else {
+      //     return
+      // }
+      // if let myArgs = args as? [String: Any],
+      //     let local = myArgs["local"] as? String {
+      //     FaceTec.sdk.setLanguage(local)
+      // }
+      // controller.addChild(facetec)
+      // facetec.onLivenessCheckPressed(self)
+      result("Call Liveness")
+    } else if (call.method == "getResultFacetec") {
+      result(false)
+      // result(facetec.latestProcessor.isSuccess())
+    } else if (call.method == "getImageFacetec") {
+      result("getImageFacetec")
+      // result(facetec.latestSessionResult.auditTrailCompressedBase64![0])
+    } else {
+      result("FlutterMethodNotImplemented")
+      // result(FlutterMethodNotImplemented)
+    }
   }
 }

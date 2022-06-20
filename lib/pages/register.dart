@@ -522,6 +522,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           _kycVisible = false;
           _kycVisibleFalse = false;
           _dataVisible = true;
+          isLoading = false;
         });
         break;
       case 5:
@@ -530,6 +531,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
           _kycVisible = false;
           _kycVisibleFalse = false;
           _dataVisible = true;
+          isLoading = false;
         });
         break;
       default:
@@ -965,6 +967,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                         Get.back();
                                         setState(() {
                                           selectedStep = 2;
+                                          isLoading = false;
                                           _kycVisible = false;
                                           _kycVisibleFalse = false;
                                           pathSelfie = '';

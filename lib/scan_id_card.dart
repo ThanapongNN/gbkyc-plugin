@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:gbkyc/api/config_api.dart';
 import 'package:gbkyc/api/post_api.dart';
 import 'package:gbkyc/utils/crop_image_path.dart';
-// import 'package:flutter/foundation.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-// import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'widgets/circular_progress.dart';
