@@ -21,5 +21,7 @@ Flutter SDK.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
 
+  s.preserve_paths = 'FaceTecSDK.framework'
+  s.xcconfig = { 'OTHER_LDFLAGS' => '-framework FaceTecSDK' }
   s.vendored_frameworks = 'FaceTecSDK.framework'
 end

@@ -58,16 +58,16 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   String fileNameLiveness = '';
 
   int length = 6;
-  int selectedStep = 4;
+  int selectedStep = 0;
   int? careerID;
   int? indexProvince, indexDistric, indexSubDistric;
   int failFacematch = 0;
 
-  bool _phoneVisible = false;
+  bool _phoneVisible = true;
   bool _otpVisible = false;
   bool _scanIDVisible = false;
   bool _dataVisible = false;
-  bool _kycVisible = true;
+  bool _kycVisible = false;
   bool _kycVisibleFalse = false;
 
   bool hasError = false;

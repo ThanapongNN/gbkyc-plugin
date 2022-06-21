@@ -7,7 +7,7 @@ import Foundation
 import FaceTecSDK
 
 class Config {
-    
+
     static var productionKey = ""
     static let DeviceKeyIdentifier = "d0ROAIJuEB3zug5WFGF0iKzXPpdyeB4D"
     static let BaseURL = "https://api.gbwallet.co/facetec"
