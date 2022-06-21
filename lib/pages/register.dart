@@ -58,16 +58,16 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   String fileNameLiveness = '';
 
   int length = 6;
-  int selectedStep = 0;
+  int selectedStep = 4;
   int? careerID;
   int? indexProvince, indexDistric, indexSubDistric;
   int failFacematch = 0;
 
-  bool _phoneVisible = true;
+  bool _phoneVisible = false;
   bool _otpVisible = false;
   bool _scanIDVisible = false;
   bool _dataVisible = false;
-  bool _kycVisible = false;
+  bool _kycVisible = true;
   bool _kycVisibleFalse = false;
 
   bool hasError = false;
@@ -165,10 +165,11 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getLivenessFacetec() async {
     try {
       isSuccess = false;
-      await facetecChannel.invokeMethod<String>(
+      var test = await facetecChannel.invokeMethod<String>(
         'getLivenessFacetec',
         {"local": Get.locale.toString() == 'th_TH' ? "th" : "en"},
       );
+      print(test);
     } on PlatformException catch (e) {
       debugPrint("Failed to get : '${e.message}'");
     }
@@ -177,6 +178,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getImageFacetec() async {
     try {
       var result = await facetecChannel.invokeMethod('getImageFacetec');
+      print(result);
       imgLivenessUint8 = base64Decode(result);
       String dir = (await getApplicationDocumentsDirectory()).path;
       String fullPath = '$dir/imageFacetec.png';
@@ -189,7 +191,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
 
   getResultFacetec() async {
     try {
-      isSuccess = await facetecChannel.invokeMethod('getResultFacetec');
+      isSuccess = await facetecChannel.invokeMethod('getResultFacetec') ?? false;
+      print(isSuccess);
       if (isSuccess) {
         setState(() => isLoading = true);
         await getImageFacetec();
