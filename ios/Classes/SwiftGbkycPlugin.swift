@@ -3,15 +3,20 @@ import UIKit
 import FaceTecSDK
 
 public class SwiftGbkycPlugin: NSObject, FlutterPlugin {
+    
     var controller: FlutterViewController!
     let facetec = SampleAppViewController()
+//    var window = UIWindow(frame: UIScreen.main.bounds)
+
+//    let viewController = UIApplication.shared.delegate!.window!!.rootViewController!
+//    let viewController = UIApplication.shared.keyWindow!.rootViewController
     
-    override init() {
+    public override init() {
         super.init()
         
         let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
         controller = window.rootViewController as? FlutterViewController
-
+        
         let url = URL(string: "https://api-uat-villa.gbwallet.co/register-api/users/liveness_config")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -45,18 +50,20 @@ public class SwiftGbkycPlugin: NSObject, FlutterPlugin {
                 }
             }
         }
-
+                        
         FaceTec.sdk.setCustomization(Config.currentCustomization)
         Config.currentCustomization.overlayCustomization.showBrandingImage = false
     }
     
-    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "gbkyc", binaryMessenger: registrar.messenger())
         let instance = SwiftGbkycPlugin()
+        
         registrar.addMethodCallDelegate(instance, channel: channel)
+        registrar.addApplicationDelegate(instance)
+ 
     }
-
+    
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         
         if (call.method == "getLivenessFacetec") {
@@ -67,9 +74,10 @@ public class SwiftGbkycPlugin: NSObject, FlutterPlugin {
                 let local = myArgs["local"] as? String {
                 FaceTec.sdk.setLanguage(local)
             }
-
+            
             controller.addChild(facetec)
             facetec.onLivenessCheckPressed(self)
+            
             result("Call Liveness")
         } else if (call.method == "getResultFacetec") {
             result(facetec.latestProcessor.isSuccess())

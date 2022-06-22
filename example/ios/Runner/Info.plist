@@ -45,8 +45,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Allow access music usage</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow accessing to use camera to take your photo and QR scan</string>
 	<key>NSPhotoLibraryUsageDescription</key>

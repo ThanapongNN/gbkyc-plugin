@@ -347,7 +347,10 @@ class _PersonalInfoState extends State<PersonalInfo> {
         int index = dataCareer.indexOf(item);
         return DropdownMenuItem(
           value: index + 1,
-          child: Text('${dataCareer[index]['name_${'language'.tr}']}'),
+          child: Text(
+            '${dataCareer[index]['name_${'language'.tr}']}',
+            style: const TextStyle(fontFamily: 'kanit', package: 'gbkyc'),
+          ),
         );
       }).toList();
       return Stack(children: [
@@ -373,7 +376,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               value: indexCareer,
               hint: Text('- ${"career".tr} -'),
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
-              style: const TextStyle(color: Colors.black, fontFamily: 'kanit', fontSize: 15),
+              style: const TextStyle(color: Colors.black, fontFamily: 'kanit', package: 'gbkyc', fontSize: 15),
               onChanged: (dynamic v) {
                 if (indexCareer != null) widget.setCareerID!(indexCareer);
                 setState(() {
@@ -421,6 +424,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     width: 300,
                     child: Text(
                       '${dataCareerChild[index]['name_${'language'.tr}']}',
+                      style: const TextStyle(fontFamily: 'kanit', package: 'gbkyc'),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -449,7 +453,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
                       value: indexCareerChild,
                       hint: Text('- ${"career_more".tr} -'),
                       icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                      style: const TextStyle(color: Colors.black, fontFamily: 'kanit', fontSize: 15),
+                      style: const TextStyle(color: Colors.black, fontFamily: 'kanit', package: 'gbkyc', fontSize: 15),
                       onChanged: (dynamic v) {
                         setState(() {
                           validateCareerChild = false;

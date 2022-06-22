@@ -123,8 +123,8 @@ class _MyAppState extends State<MyApp> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             filled: true,
             fillColor: Colors.white,
-            labelStyle: const TextStyle(fontSize: 16, color: Colors.black54),
-            hintStyle: const TextStyle(color: Colors.grey),
+            labelStyle: const TextStyle(fontSize: 16, color: Colors.black54, fontFamily: 'kanit', package: 'gbkyc'),
+            hintStyle: const TextStyle(color: Colors.grey, fontFamily: 'kanit', package: 'gbkyc'),
             counterStyle: const TextStyle(fontSize: 0),
           ),
           textTheme: const TextTheme(
