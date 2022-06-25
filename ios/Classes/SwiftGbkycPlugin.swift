@@ -60,11 +60,11 @@ public class SwiftGbkycPlugin: NSObject, FlutterPlugin {
                 let local = myArgs["local"] as? String {
                 FaceTec.sdk.setLanguage(local)
             }
-            
-            if(UIApplication.shared.delegate!.window != nil) {
-                controller = UIApplication.shared.delegate!.window!!.rootViewController! as! FlutterViewController
-            }else {
-                controller = UIApplication.shared.keyWindow!.rootViewController!.presentedViewController as! FlutterViewController
+
+            controller = UIApplication.shared.delegate!.window??.rootViewController! as? FlutterViewController
+
+            if(controller == nil) {
+                controller = UIApplication.shared.keyWindow!.rootViewController!.presentedViewController as? FlutterViewController
             }
             
             controller.addChild(facetec)
