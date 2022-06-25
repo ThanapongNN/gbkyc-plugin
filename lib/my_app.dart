@@ -126,6 +126,7 @@ class _MyAppState extends State<MyApp> {
             labelStyle: const TextStyle(fontSize: 16, color: Colors.black54, fontFamily: 'kanit', package: 'gbkyc'),
             hintStyle: const TextStyle(color: Colors.grey, fontFamily: 'kanit', package: 'gbkyc'),
             counterStyle: const TextStyle(fontSize: 0),
+            errorStyle: const TextStyle(fontFamily: 'kanit', package: 'gbkyc'),
           ),
           textTheme: const TextTheme(
             button: TextStyle(fontSize: 17, fontFamily: 'kanit', package: 'gbkyc'),
