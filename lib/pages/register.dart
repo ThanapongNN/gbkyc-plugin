@@ -165,10 +165,11 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getLivenessFacetec() async {
     try {
       isSuccess = false;
-      await facetecChannel.invokeMethod<String>(
+      var result = await facetecChannel.invokeMethod<String>(
         'getLivenessFacetec',
         {"local": Get.locale.toString() == 'th_TH' ? "th" : "en"},
       );
+      debugPrint('getLivenessFacetec = $result');
     } on PlatformException catch (e) {
       debugPrint("Failed to get : '${e.message}'");
     }
@@ -177,6 +178,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getImageFacetec() async {
     try {
       var result = await facetecChannel.invokeMethod('getImageFacetec');
+      debugPrint('getImageFacetec = $result');
       imgLivenessUint8 = base64Decode(result);
       String dir = (await getApplicationDocumentsDirectory()).path;
       String fullPath = '$dir/imageFacetec.png';
@@ -190,6 +192,7 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   getResultFacetec() async {
     try {
       isSuccess = await facetecChannel.invokeMethod('getResultFacetec') ?? false;
+      debugPrint('getResultFacetec = $isSuccess');
       if (isSuccess) {
         setState(() => isLoading = true);
         await getImageFacetec();

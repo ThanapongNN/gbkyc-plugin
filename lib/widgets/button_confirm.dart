@@ -14,7 +14,7 @@ class ButtonConfirm extends StatelessWidget {
     Key? key,
     required this.onPressed,
     required this.text,
-    this.radius = 25,
+    this.radius = 30,
     this.width = double.infinity,
     this.padding = EdgeInsets.zero,
     this.margin = EdgeInsets.zero,
@@ -24,7 +24,7 @@ class ButtonConfirm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 60,
       width: width,
       padding: padding,
       margin: margin,

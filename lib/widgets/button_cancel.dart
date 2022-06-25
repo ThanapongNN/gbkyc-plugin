@@ -20,17 +20,17 @@ class ButtonCancel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 60,
       width: width,
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(30),
       ),
       child: MaterialButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(30),
           side: const BorderSide(color: Color(0xFF02416D)),
         ),
         onPressed: onPressed,
