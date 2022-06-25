@@ -756,9 +756,10 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                 ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Expanded(
                       child: Container(
+                        height: 60,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(30),
                           gradient: const LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -766,6 +767,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                           ),
                         ),
                         child: MaterialButton(
+                          height: 60,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           onPressed: () async {
                             _timer?.cancel();
                             setState(() => isLoading = true);
@@ -795,9 +798,10 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                     ? Row(children: [
                         Expanded(
                           child: MaterialButton(
+                            height: 60,
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(30),
                               side: const BorderSide(color: Color(0xFF115899)),
                             ),
                             child: Text('Re-take_photo'.tr, style: const TextStyle(color: Color(0xFF115899))),
@@ -856,8 +860,9 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                         const SizedBox(width: 20),
                         Expanded(
                           child: Container(
+                            height: 60,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(30),
                               gradient: const LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -868,6 +873,8 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                               ),
                             ),
                             child: MaterialButton(
+                              height: 60,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                               child: Text('continue'.tr),
                               onPressed: () async {
                                 final resFrontID = await PostAPI.callFormData(
