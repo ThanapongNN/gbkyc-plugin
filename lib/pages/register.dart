@@ -46,14 +46,14 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
   final format = DateFormat('dd/MM/yyyy');
 
   String txPhoneNumber = "";
-  String? sendOtpId;
+  String sendOtpId = '';
   String countryCode = "+66";
-  String? ocrBackLaser;
-  String? pathFrontCitizen;
-  String? pathBackCitizen;
+  String ocrBackLaser = '';
+  String pathFrontCitizen = '';
+  String pathBackCitizen = '';
   String pathSelfie = '';
-  String? fileNameFrontID;
-  String? fileNameBackID;
+  String fileNameFrontID = '';
+  String fileNameBackID = '';
   String fileNameSelfieID = '';
   String fileNameLiveness = '';
 
@@ -235,17 +235,17 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
               "birthday": birthdayController.text,
               "pin": "111222",
               // "pin": pinController.text,
-              "send_otp_id": sendOtpId!,
-              "laser": ocrBackLaser!,
+              "send_otp_id": sendOtpId,
+              "laser": ocrBackLaser,
               "province_id": '$indexProvince',
               "district_id": '$indexDistric',
               "sub_district_id": '$indexSubDistric',
               "career_id": '$careerID',
               "work_name": workNameController.text,
               "work_address": '${workAddressController.text} ${workAddressSerchController.text}',
-              "file_front_citizen": fileNameFrontID!,
-              "file_back_citizen": fileNameBackID!,
-              "file_selfie": fileNameSelfieID,
+              "file_front_citizen": fileNameFrontID,
+              "file_back_citizen": fileNameBackID,
+              "file_selfie": '',
               "file_liveness": fileNameLiveness,
               "imei": StateStore.deviceSerial.value,
               "fcm_token": StateStore.fcmToken.value,
@@ -927,16 +927,16 @@ class _RegisterState extends State<Register> with WidgetsBindingObserver {
                                     "birthday": birthdayController.text,
                                     "pin": "111222",
                                     // "pin": pinController.text,
-                                    "send_otp_id": sendOtpId!,
-                                    "laser": ocrBackLaser!,
+                                    "send_otp_id": sendOtpId,
+                                    "laser": ocrBackLaser,
                                     "province_id": '$indexProvince',
                                     "district_id": '$indexDistric',
                                     "sub_district_id": '$indexSubDistric',
                                     "career_id": '$careerID',
                                     "work_name": workNameController.text,
                                     "work_address": '${workAddressController.text} ${workAddressSerchController.text}',
-                                    "file_front_citizen": fileNameFrontID!,
-                                    "file_back_citizen": fileNameBackID!,
+                                    "file_front_citizen": fileNameFrontID,
+                                    "file_back_citizen": fileNameBackID,
                                     "file_selfie": fileNameSelfieID,
                                     "file_liveness": '',
                                     "imei": StateStore.deviceSerial.value,
